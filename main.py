@@ -1,6 +1,7 @@
-from stock.price import get_adj_price
-from stock.basic import get_hs_stock_list
+import logging
+
+from stock.task import run_hs_stock_adj_price_task
 
 if __name__ == "__main__":
-    df = get_hs_stock_list()
-    print(df.head())
+    logging.basicConfig(filename='idc.log', level=logging.INFO)
+    run_hs_stock_adj_price_task(10)

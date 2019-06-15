@@ -34,7 +34,7 @@ def run_hs_stock_adj_price_task(past_diff_days):
         ts_code = row['ts_code'].split('.')[0]
         logger.info(f'{ts_code} start fqprice job {today_str}')
         # 延迟抓取数据
-        time.sleep(random.uniform(2, 5))
+        time.sleep(random.uniform(1, 2))
         adj_price_df = get_adj_price({
             'ts_code': row['ts_code'],
             'start_date': past_str,

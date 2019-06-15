@@ -4,6 +4,7 @@ import pandas as pd
 import logging
 from stock.basic import get_hs_stock_list
 from stock.price import get_adj_price
+from mongo.dal import updateOne
 
 
 # 自动任务：更新沪深股市全部上市股票past_diff_days天前的前复权数据
@@ -35,4 +36,22 @@ def run_hs_stock_adj_price_task(past_diff_days):
             'end_date': today_str,
             'adj': 'qfq'
         })
-        print(adj_price_df.head(10))
+        for index, row in adj_price_df.iterrows():
+            ts_code = row['ts_code'].split('.')[0]
+            trade_date = row['trade_date']
+            _id = f'{ts_code}-{trade_date}'
+            data = {
+                '_id': _id,
+                'code': ts_code,
+                'date': int(row['trade_date']),
+                'open': float('%.2f' % row['open']),
+                'close': float('%.2f' % row['close']),
+                'low': float('%.2f' % row['low']),
+                'pre_close': float('%.2f' % row['pre_close']),
+                'change': float('%.2f' % row['change']),
+                'pct_chg': float('%.2f' % row['pct_chg']),
+                'vol': float('%.2f' % row['vol']),
+                'amout': float('%.3f' % row['amount'])
+            }
+            updateOne({'_id': _id}, data, True)
+        # print(adj_price_df.head(10))

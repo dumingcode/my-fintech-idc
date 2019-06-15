@@ -2,13 +2,14 @@ import tushare as ts
 
 from config import cons as ct
 
+
 def get_hs_stock_list(param):
     """
         沪深股市股票列表
-    Parameters 
+    Parameters
     ------
         Dict
-        is_hs: 是否沪深港通标的，N否 H沪股通 S深股通 
+        is_hs: 是否沪深港通标的，N否 H沪股通 S深股通
         list_status: 上市状态： L上市 D退市 P暂停上市
         exchange: 交易所 SSE上交所 SZSE深交所 HKEX港交所(未上线)
         fields: ts_code,symbol,name,area,industry,list_date
@@ -25,5 +26,7 @@ def get_hs_stock_list(param):
     """
     ts.set_token(ct.TOKEN)
     pro = ts.pro_api()
-    df = pro.stock_basic(list_status=param['list_status'],exchange=param['exchange'],filelds=param['fields'])
+    df = pro.stock_basic(
+        list_status=param['list_status'], exchange=param['exchange'],
+        filelds=param['fields'])
     return df

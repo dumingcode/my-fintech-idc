@@ -10,7 +10,7 @@ from stock.price import get_adj_price
 def run_hs_stock_adj_price_task(past_diff_days):
     """
         沪深股市股票列表
-    Parameters 
+    Parameters
     ------
         past_diff_days: 查询x天前的股票复权数据
     Return

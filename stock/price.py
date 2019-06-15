@@ -5,7 +5,7 @@ from config import cons as ct
 def get_adj_price(param):
     """
         获取复权行情
-    Parameters 
+    Parameters
     ------
         Dict
         ts_code: str      ts股票代码

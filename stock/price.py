@@ -25,7 +25,7 @@ def get_adj_price(param):
                 industry      行业
                 list_date     上市日期
     """
-    ts.set_token(ct.TOKEN)
+    ts.set_token(ct.conf('TOKEN'))
     ts.pro_api()
     df = ts.pro_bar(ts_code=param['ts_code'],
                     adj=param['adj'],

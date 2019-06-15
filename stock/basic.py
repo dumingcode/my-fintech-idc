@@ -24,7 +24,7 @@ def get_hs_stock_list(param):
                 industry      行业
                 list_date     上市日期
     """
-    ts.set_token(ct.TOKEN)
+    ts.set_token(ct.conf('TOKEN'))
     pro = ts.pro_api()
     df = pro.stock_basic(
         list_status=param['list_status'], exchange=param['exchange'],

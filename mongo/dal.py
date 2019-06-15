@@ -5,7 +5,8 @@ from config import cons as ct
 
 
 def updateOne(filter, doc, upsert=False):
-    client = pymongo.MongoClient(ct.MONGODB['url'], ct.MONGODB['port'])
+    client = pymongo.MongoClient(
+        ct.conf('MONGODB')['url'], ct.conf('MONGODB')['port'])
     db = client.stock
     updateResult = db.hisprice.update_one(filter, {"$set": doc}, upsert)
     client.close()

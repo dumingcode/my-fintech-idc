@@ -10,13 +10,18 @@ from stock.task import run_hs_stock_adj_price_task
 
 
 def his_fq_stock_price_task():
-    # 默认回溯天数
     logger.info(f'*******his_fq_stock_price_task start*******')
     back_track_datys = ct.conf('BACK_TRACK_DAYS')
+    exchange = ''
     if len(sys.argv) > 2 and sys.argv[2].isdigit():
         back_track_datys = int(sys.argv[2])
-    logger.info(f'fetch stock price data {back_track_datys} days ago')
-    run_hs_stock_adj_price_task(back_track_datys)
+    # 获取交易市场
+    if len(sys.argv) > 3 and (sys.argv[3] == 'SSE' or sys.argv[3] == 'SZSE'):
+        exchange = sys.argv[3]
+    logger.info(
+        f'fetch stock price data {back_track_datys} days ago market is \
+            {exchange} ')
+    run_hs_stock_adj_price_task(back_track_datys, exchange)
     logger.info(f'*******his_fq_stock_price_task end*******')
 
 

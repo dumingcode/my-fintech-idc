@@ -58,4 +58,51 @@ def run_hs_stock_adj_price_task(past_diff_days, exchange=''):
             }
             res = updateOne({'_id': _id}, data, True)
     return True
-    # print(adj_price_df.head(10))
+
+# 自动任务：更新沪深股市指定上市股票past_diff_days天前的前复权数据
+
+
+def run_hs_given_stock_adj_price_task(ts_code, past_diff_days=600):
+    """
+        更新沪深股市指定上市股票past_diff_days天前的前复权数据
+    Parameters
+    ------
+        past_diff_days: 查询x天前的股票复权数据
+        ts_code: 000001.SZ
+    Return
+    -------
+        result 是否正常结束
+    """
+    if ts_code.endswith('.SZ') or ts_code.endswith('.SH'):
+        pass
+    else:
+        logger.critical(f'ts_code {ts_code} is invalid')
+        return False
+
+    delta = datetime.timedelta(days=past_diff_days)
+    past_str = (datetime.date.today() - delta).strftime('%Y%m%d')
+    today_str = datetime.date.today().strftime('%Y%m%d')
+    adj_price_df = get_adj_price({
+        'ts_code': ts_code,
+        'start_date': past_str,
+        'end_date': today_str,
+        'adj': 'qfq'
+    })
+    for index, row in adj_price_df.iterrows():
+        trade_date = row['trade_date']
+        _id = f'{ts_code}-{trade_date}'
+        data = {
+            '_id': _id,
+            'code': ts_code,
+            'date': int(row['trade_date']),
+            'open': float('%.2f' % row['open']),
+            'close': float('%.2f' % row['close']),
+            'low': float('%.2f' % row['low']),
+            'pre_close': float('%.2f' % row['pre_close']),
+            'change': float('%.2f' % row['change']),
+            'pct_chg': float('%.2f' % row['pct_chg']),
+            'vol': float('%.2f' % row['vol']),
+            'amout': float('%.3f' % row['amount'])
+        }
+        res = updateOne({'_id': _id}, data, True)
+    return True

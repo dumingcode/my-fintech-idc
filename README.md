@@ -6,4 +6,5 @@ python 版本数据中心
 pip install tushare
 pip install pymongo
 pip install loguru
+pip install pytest
 ```

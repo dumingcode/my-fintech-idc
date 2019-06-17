@@ -11,13 +11,13 @@ before_install:
   - chmod 600 ~/.ssh/id_rsa
 install:
   - pip install tushare pymongo loguru pytest
+script: pytest
 deploy:
   provider: script
   skip_cleanup: true
   script: rsync -r --delete-after --quiet $TRAVIS_BUILD_DIR $deploy_user@39.107.119.46:$DEPLOY_PATH
   on:
     branch: master
-
 after_deploy:
   - ssh $deploy_user@39.107.119.46 "sh $DEPLOY_PATH/cluster.sh"
 addons:

@@ -26,6 +26,6 @@ deploy:
   on:
     branch: master
 after_deploy:
-  - ssh $deploy_user@39.107.119.46 "sh $DEPLOY_PATH/cluster.sh"
+  - ssh $deploy_user@39.107.119.46 "chmod +x $DEPLOY_PATH/my-fintech-idc/cron/*.sh"
 addons:
   ssh_known_hosts: 39.107.119.46

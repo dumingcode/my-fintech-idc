@@ -5,10 +5,10 @@ from loguru import logger
 
 
 def conf(key):
-    env = 'prod'
+    env = 'dev'
     try:
-        if len(sys.argv) > 1 and sys.argv[1] == 'dev':
-            env = 'dev'
+        if len(sys.argv) > 1 and sys.argv[1] == 'prod':
+            env = 'prod'
         if env == 'prod':
             return ct_prod.CONFIG[key]
         elif env == 'dev':

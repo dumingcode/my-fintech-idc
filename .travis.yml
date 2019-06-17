@@ -1,4 +1,5 @@
 sudo: false
+cache: pip
 language: python
 python:
   - "3.7"
@@ -6,7 +7,7 @@ branches:
   only:
   - master
 before_install: 
-  - openssl aes-256-cbc -K $encrypted_383bc2ea2d21_key -iv $encrypted_383bc2ea2d21_iv -in id_rsa.enc -out ~/.ssh/id_rsa -d
+  - openssl aes-256-cbc -K $encrypted_383bc2ea2d21_key -iv $encrypted_383bc2ea2d21_iv -in id_rsa.enc -out id_rsa -d
   - chmod 600 ~/.ssh/id_rsa
 install:
   - pip install -r requirements.txt
@@ -19,3 +20,5 @@ deploy:
 
 after_deploy:
   - ssh $deploy_user@39.107.119.46 "sh $DEPLOY_PATH/cluster.sh"
+addons:
+  ssh_known_hosts: 39.107.119.46

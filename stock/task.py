@@ -74,6 +74,7 @@ def run_his_given_stock_adj_price_task(ts_code, past_diff_days=600):
     -------
         result 是否正常结束
     """
+    logger.info(f'{ts_code} run_his_given_stock_adj_price_task start')
     if ts_code.endswith('.SZ') or ts_code.endswith('.SH'):
         pass
     else:
@@ -106,6 +107,7 @@ def run_his_given_stock_adj_price_task(ts_code, past_diff_days=600):
             'amout': float('%.3f' % row['amount'])
         }
         res = updateOne({'_id': _id}, 'hisprice', data, True)
+    logger.info(f'{ts_code} run_his_given_stock_adj_price_task end')
     return True
 
 

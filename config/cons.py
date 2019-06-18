@@ -2,6 +2,7 @@ import sys
 from config import cons_prod as ct_prod
 from config import cons_dev as ct_dev
 from loguru import logger
+import random
 
 
 def conf(key):
@@ -18,3 +19,16 @@ def conf(key):
     except KeyError:
         logger.critical(f'config key:{key} is not found')
         sys.exit()
+
+# 获取腾讯前复权url（内含分红送股数据）
+
+
+def tecentUrl(symbol: str, diff_days: int) -> str:
+    code = ''
+    if symbol.startswith('6'):
+        code = f'sh{symbol}'
+    else:
+        code = f'sz{symbol}'
+    ran = random.randrange(1000000, 100000000, 1)
+    url = f'http://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param={code},day,,,{diff_days},qfq&r={ran}'
+    return url

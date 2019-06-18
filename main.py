@@ -3,9 +3,7 @@ import sys
 from loguru import logger
 
 from config import cons as ct
-from mongo.dal import updateOne
-from stock.task import run_hs_stock_adj_price_task
-
+from stock import task
 # 更新股票历史前复权数据任务
 
 
@@ -21,7 +19,7 @@ def his_fq_stock_price_task():
     logger.info(
         f'fetch stock price data {back_track_datys} days ago market is \
             {exchange} ')
-    run_hs_stock_adj_price_task(back_track_datys, exchange)
+    task.run_his_stock_adj_price_task(back_track_datys, exchange)
     logger.info(f'*******his_fq_stock_price_task end*******')
 
 
@@ -35,4 +33,6 @@ if __name__ == "__main__":
     env = ct.conf('ENV')
     logger.info(f'env is {env}')
     # task one
+    task.run_his_dividend_stock_price_task(2)
+    # task two
     his_fq_stock_price_task()

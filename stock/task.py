@@ -90,6 +90,7 @@ def run_his_given_stock_adj_price_task(ts_code, past_diff_days=600):
         'end_date': today_str,
         'adj': 'qfq'
     })
+    ts_code = ts_code.split('.')[0]
     for index, row in adj_price_df.iterrows():
         trade_date = row['trade_date']
         _id = f'{ts_code}-{trade_date}'

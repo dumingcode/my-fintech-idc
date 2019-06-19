@@ -33,6 +33,6 @@ if __name__ == "__main__":
     env = ct.conf('ENV')
     logger.info(f'env is {env}')
     # task one
-    task.run_his_dividend_stock_price_task(2)
+    task.run_his_dividend_stock_price_task(3)
     # task two
     his_fq_stock_price_task()

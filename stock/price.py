@@ -30,5 +30,6 @@ def get_adj_price(param):
     df = ts.pro_bar(ts_code=param['ts_code'],
                     adj=param['adj'],
                     start_date=param['start_date'],
+                    asset=param['asset'],
                     end_date=param['end_date'])
     return df

@@ -3,9 +3,6 @@ cache: pip
 language: python
 python:
   - "3.7"
-branches:
-  only:
-  - master
 services:
   - mongodb
 before_install: 

@@ -1,4 +1,5 @@
 from stock import task
+from stock import basic
 
 # 校验针对个股获取历史数据
 
@@ -6,6 +7,20 @@ from stock import task
 def test_given_stock_hisprice_task():
     assert task.run_his_given_stock_adj_price_task('000001', 1) is False
     assert task.run_his_given_stock_adj_price_task('000001.SZ', 1) is True
+    assert task.run_his_given_stock_adj_price_task('399300.SZ', 1) is True
+
+# history_data[history_data.ph_star==raw]['ph'].iloc[0]
+
+# 测试返回的股票代码含有沪深300
+
+
+def test_stock_list_hs300():
+    df = basic.get_hs_stock_list({
+        'list_status': 'L',
+        'exchange': '',
+        'fields': 'ts_code,symbol,list_date'
+    })
+    assert df[df.ts_code == '399300.SZ']['symbol'].iloc[0] == '399300'
 
 # 更新分红除权股票前复权价格
 

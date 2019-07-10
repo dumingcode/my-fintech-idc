@@ -16,6 +16,13 @@ def his_fq_stock_price_task():
     # 获取交易市场
     if len(sys.argv) > 3 and (sys.argv[3] == 'SSE' or sys.argv[3] == 'SZSE'):
         exchange = sys.argv[3]
+    # 获取个股代码
+    if len(sys.argv) > 4:
+        given_stock = sys.argv[4]
+        task.run_his_given_stock_adj_price_task(given_stock, back_track_datys)
+        logger.info(
+            f'*******given stock****{given_stock}**{back_track_datys}*')
+        return
     logger.info(
         f'fetch stock price data {back_track_datys} days ago market is \
             {exchange} ')
@@ -33,6 +40,8 @@ if __name__ == "__main__":
     env = ct.conf('ENV')
     logger.info(f'env is {env}')
     # task one
-    task.run_his_dividend_stock_price_task(3)
-    # task two
     his_fq_stock_price_task()
+    if len(sys.argv) > 4:
+        exit()
+    # task two
+    task.run_his_dividend_stock_price_task(3)

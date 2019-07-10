@@ -1,5 +1,5 @@
 import tushare as ts
-
+import pandas as pd
 from config import cons as ct
 
 
@@ -29,4 +29,7 @@ def get_hs_stock_list(param):
     df = pro.stock_basic(
         list_status=param['list_status'], exchange=param['exchange'],
         filelds=param['fields'])
+    new = pd.DataFrame({'ts_code': ['399300.SZ'],
+                        'symbol': ['399300']})
+    df = df.append(new)
     return df

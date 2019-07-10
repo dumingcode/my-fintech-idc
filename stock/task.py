@@ -26,7 +26,7 @@ def run_his_stock_adj_price_task(past_diff_days, exchange=''):
     param = {
         'list_status': 'L',
         'exchange': exchange,
-        'fields': 'ts_code,sumbol,list_date'
+        'fields': 'ts_code,symbol,list_date'
     }
     hs_df = get_hs_stock_list(param)
     delta = datetime.timedelta(days=past_diff_days)
@@ -39,7 +39,8 @@ def run_his_stock_adj_price_task(past_diff_days, exchange=''):
             'ts_code': row['ts_code'],
             'start_date': past_str,
             'end_date': today_str,
-            'adj': 'qfq'
+            'adj': 'qfq',
+            'asset': 'I' if str(row['ts_code']).startswith('399') else 'E'
         })
         for index, row in adj_price_df.iterrows():
             trade_date = row['trade_date']
@@ -89,7 +90,8 @@ def run_his_given_stock_adj_price_task(ts_code, past_diff_days=600):
         'ts_code': ts_code,
         'start_date': past_str,
         'end_date': today_str,
-        'adj': 'qfq'
+        'adj': 'qfq',
+        'asset': 'I' if ts_code.startswith('399') else 'E'
     })
     ts_code = ts_code.split('.')[0]
     for index, row in adj_price_df.iterrows():

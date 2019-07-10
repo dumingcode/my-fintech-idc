@@ -39,9 +39,12 @@ if __name__ == "__main__":
     logger.add("idc_{time}.log",  rotation="1 day", level="INFO")
     env = ct.conf('ENV')
     logger.info(f'env is {env}')
+
     # task one
     his_fq_stock_price_task()
     if len(sys.argv) > 4:
         exit()
     # task two
-    task.run_his_dividend_stock_price_task(3)
+    task.run_his_dividend_stock_price_task(2)
+    # task three
+    task.run_stock_52week_lowprice_task()

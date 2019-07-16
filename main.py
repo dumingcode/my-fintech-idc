@@ -4,6 +4,7 @@ from loguru import logger
 
 from config import cons as ct
 from stock import task
+from stock import basic
 # 更新股票历史前复权数据任务
 
 
@@ -36,10 +37,12 @@ if __name__ == "__main__":
     logger.add(sys.stdout, colorize=True,
                format="<green>{time}</green> <level>{message}</level>",
                level="INFO")
-    logger.add("idc_{time}.log",  rotation="1 day", level="INFO")
+    if env == 'prod':
+        logger.add("idc_{time}.log",  rotation="1 day", level="INFO")
     env = ct.conf('ENV')
     logger.info(f'env is {env}')
-
+    basic.get_hs_cb_list()
+    exit()
     # task one
     his_fq_stock_price_task()
     if len(sys.argv) > 4:

@@ -33,3 +33,26 @@ def get_adj_price(param):
                     asset=param['asset'],
                     end_date=param['end_date'])
     return df
+
+
+def get_tecent_price(code: str, diff_days: int) -> bool:
+    dividend_url = ct.tecentUrl(code, diff_days)
+    html = requests.get(dividend_url)
+    if html.status_code != 200:
+        logger.critical(
+            f'{dividend_url} is error code :{html.status_code}')
+        return False
+    ret_jsons = json.loads(html.text)
+    # 110 113 sh
+    # 123 127 128 sz
+    query_code = f'sh{code}' if code.startswith('6') or code.startswith(
+        '110') or code.startswith('113') else f'sz{code}'
+    try:
+        qfqdays = ret_jsons['data'][query_code]['qfqday']
+    except KeyError:
+        logger.critical(f'{query_code} data invalid')
+        return
+    for qfqday in qfqdays:
+        if len(qfqday) > 6:
+            return True
+    return False

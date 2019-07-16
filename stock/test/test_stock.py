@@ -28,8 +28,9 @@ def test_stock_list_hs300():
 
 def test_52week_low():
     assert quant.manage52WeekLowestPrice({'code': '000001'}) is True
-# 更新分红除权股票前复权价格
 
 
-# def test_stock_dividend_share():
-#     assert task.run_his_dividend_stock_price_task(3) is True
+# 测试转债列表返回应该大于0
+def test_cb_list():
+    arr = basic.get_hs_cb_list()
+    assert len(arr) > 0

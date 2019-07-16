@@ -10,5 +10,6 @@ CONFIG = {
         'port': 6379,
         'host': 'localhost',
         'keyPrefix': 'myfintech-'
-    }
+    },
+    'CB_URL': 'https://www.jisilu.cn/data/cbnew/#cb'
 }

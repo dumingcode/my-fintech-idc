@@ -161,3 +161,25 @@ def run_stock_52week_lowprice_task():
         code = row['symbol']
         quant.manage52WeekLowestPrice({'code': code})
     return True
+
+
+def run_his_cb_price_task(diff_days: int):
+    """
+    更新沪深股市diff_days天内转债价格数据
+    Parameters
+    ------
+    diff_days: 查询x天前的转债复权数据
+    Return
+    -------
+    result 是否正常结束
+    """
+    logger.info('********run_his_cb_price_task start******')
+    try:
+        cbs = basic.get_hs_cb_list()
+        for cb in cbs:
+            psss
+    except Exception as exp:
+        logger.critical(exp)
+        return False
+    logger.info('*********run_his_cb_price_task end********')
+    return True

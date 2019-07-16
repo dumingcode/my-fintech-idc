@@ -30,5 +30,16 @@ def tecentUrl(symbol: str, diff_days: int) -> str:
     else:
         code = f'sz{symbol}'
     ran = random.randrange(1000000, 100000000, 1)
-    url = f'http://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param={code},day,,,{diff_days},qfq&r={ran}'
+    url = f'http://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param={code}' + \
+        f',day, , , {diff_days}, qfq & r = {ran}'
+    return url
+
+
+# 获取东方财富转债列表
+def cbListUrl() -> str:
+    ran = random.randrange(52093791, 58093791, 1)
+    url = "http://dcfm.eastmoney.com/em_mutisvcexpandinterface/api/js/get?" + \
+        "type=KZZ_LB2.0&token=70f12f2f4f091e459a279469fe49eca5&cmd=&st=" +\
+        "STARTDATE&sr=-1&p=1&ps=2000&js=var%20YNohbZAK=" + \
+        "{pages:(tp),data:(x),font:(font)}"+f'&rt={ran}'
     return url

@@ -1,6 +1,10 @@
 import tushare as ts
 import pandas as pd
 from config import cons as ct
+import requests
+from loguru import logger
+import json
+import re
 
 
 def get_hs_stock_list(param):
@@ -33,3 +37,54 @@ def get_hs_stock_list(param):
                         'symbol': ['399300']})
     df = df.append(new)
     return df
+
+
+def get_hs_cb_list(type: str = 'cb', status: str = 'L') -> []:
+    """
+        沪深股市转债列表
+    Parameters
+    ------
+        Dict
+        type: cb（转债） 、 eb（可交换债）、 ''表示两者都有、默认eb
+        status: 上市状态： L上市 W未上市或暂停上市、默认L
+    Return
+    -------
+        DataFrame
+            转债列表(DataFrame):
+                BONDCODE          转债代码
+                CORRESNAME        转债名称
+                SWAPSCODE         正股代码
+                SECURITYSHORTNAME 正股名称
+                SNAME             转债名称
+                STARTDATE     申购开始时间
+    """
+    cb_url = ct.cbListUrl()
+    try:
+        html = requests.get(cb_url)
+        if html.status_code != 200:
+            raise RuntimeError(f'{cb_url} is error code :{html.status_code}')
+        content = html.text
+        pattern = re.compile(r'{(.*?)}', re.M)
+        match = pattern.findall(content)
+        i = 0
+        ret = []
+        while i < len(match)-1:
+            i += 1
+            try:
+                sjson = json.loads('{'+match[i]+'}')
+                if sjson.get('BONDCODE') is None:
+                    continue
+                ret.append({'BONDCODE': sjson['BONDCODE'], 'CORRESNAME':
+                            sjson['CORRESNAME'], 'SWAPSCODE':
+                            sjson['SWAPSCODE'], 'SECURITYSHORTNAME':
+                            sjson['SECURITYSHORTNAME'], 'SNAME':
+                            sjson['SNAME'], 'STARTDATE': sjson['STARTDATE']
+                            })
+            except Exception as err:
+                logger.error(
+                    f'{match[i]} json parse error')
+                continue
+    except Exception as err:
+        logger.error(err)
+        return ret
+    return ret

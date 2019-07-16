@@ -62,6 +62,7 @@ def run_his_stock_adj_price_task(past_diff_days, exchange=''):
                 'amout': float('%.3f' % row['amount'])
             }
             res = dal.updateOne({'_id': _id}, 'hisprice', data, True)
+        time.sleep(1)
     return True
 
 # 自动任务：更新沪深股市指定上市股票past_diff_days天前的前复权数据
@@ -134,6 +135,7 @@ def run_his_dividend_stock_price_task(diff_days: int):
             diff_days)
         for stock in divid_stocks:
             run_his_given_stock_adj_price_task(stock)
+            time.sleep(1)
     except Exception as exp:
         logger.critical(exp)
         return False

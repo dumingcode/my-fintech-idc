@@ -35,6 +35,7 @@ def get_recent_dividend_share_stocks(diff_days: int = 5) -> []:
             is_dividend = is_stock_recent_dividend(code, diff_days)
             if is_dividend:
                 stock_list.append(row['ts_code'])
+            time.sleep(1)
         except Exception as err:
             logger.critical(err)
             continue

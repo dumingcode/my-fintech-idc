@@ -179,6 +179,7 @@ def run_his_cb_price_task(diff_days: int):
     try:
         cbs = basic.get_hs_cb_list()
         for cb in cbs:
+            time.sleep(1)
             psss
     except Exception as exp:
         logger.critical(exp)

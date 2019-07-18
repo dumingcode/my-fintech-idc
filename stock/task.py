@@ -44,6 +44,8 @@ def run_his_stock_adj_price_task(past_diff_days, exchange=''):
             'adj': 'qfq',
             'asset': 'I' if str(row['ts_code']).startswith('399') else 'E'
         })
+        if adj_price_df is None:
+            continue
         for index, row in adj_price_df.iterrows():
             trade_date = row['trade_date']
             _id = f'{ts_code}-{trade_date}'
@@ -96,6 +98,10 @@ def run_his_given_stock_adj_price_task(ts_code, past_diff_days=600):
         'adj': 'qfq',
         'asset': 'I' if ts_code.startswith('399') else 'E'
     })
+
+    if adj_price_df is None:
+        logger.warning(f'ts_code {ts_code} price data is None')
+        return False
     ts_code = ts_code.split('.')[0]
     for index, row in adj_price_df.iterrows():
         trade_date = row['trade_date']

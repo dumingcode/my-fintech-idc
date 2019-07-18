@@ -1,5 +1,8 @@
 import tushare as ts
 from config import cons as ct
+import requests
+import json
+from loguru import logger
 
 
 def get_adj_price(param):
@@ -35,24 +38,62 @@ def get_adj_price(param):
     return df
 
 
-def get_tecent_price(code: str, diff_days: int) -> bool:
-    dividend_url = ct.tecentUrl(code, diff_days)
-    html = requests.get(dividend_url)
+def get_tecent_price(code: str, diff_days: int) -> []:
+    """
+        根据tecent获取价格数据
+    Parameters
+    ------
+        Dict
+        code: str      股票代码
+        diff_days: int  n天前的历史数据
+    Return
+    -------
+        array
+            股票列表():
+                _id 主键
+                code 代码
+                date 日期
+                open 开盘价
+                close 收盘价
+                high  最高价
+                low  最低价
+                amount 成交量
+    """
+    url = ct.tecentUrl(code, diff_days)
+    html = requests.get(url)
     if html.status_code != 200:
         logger.critical(
-            f'{dividend_url} is error code :{html.status_code}')
-        return False
+            f'{url} is error code :{html.status_code}')
+        return []
     ret_jsons = json.loads(html.text)
+    # 转债代码代码规则
     # 110 113 sh
     # 123 127 128 sz
     query_code = f'sh{code}' if code.startswith('6') or code.startswith(
         '110') or code.startswith('113') else f'sz{code}'
+    stockArr = []
     try:
-        qfqdays = ret_jsons['data'][query_code]['qfqday']
+        temp = ret_jsons['data'][query_code]
+        if 'qfqday' in temp:
+            qfqdays = ret_jsons['data'][query_code]['qfqday']
+        elif 'day' in temp:
+            qfqdays = ret_jsons['data'][query_code]['day']
+        else:
+            return []
+        for element in qfqdays:
+            stockInfo = {}
+            date = element[0]
+            date = date.replace('-', '')
+            stockInfo['_id'] = f'{code}-{date}'
+            stockInfo['code'] = code
+            stockInfo['date'] = int(date)
+            stockInfo['open'] = float(element[1])
+            stockInfo['close'] = float(element[2])
+            stockInfo['high'] = float(element[3])
+            stockInfo['low'] = float(element[4])
+            stockInfo['amount'] = float(element[5])
+            stockArr.append(stockInfo)
     except KeyError:
-        logger.critical(f'{query_code} data invalid')
-        return
-    for qfqday in qfqdays:
-        if len(qfqday) > 6:
-            return True
-    return False
+        logger.warning(f'{query_code} data invalid')
+        return []
+    return stockArr

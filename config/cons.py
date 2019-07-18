@@ -21,17 +21,20 @@ def conf(key):
         sys.exit()
 
 # 获取腾讯前复权url（内含分红送股数据）
+# 110 113 sh
+# 123 127 128 sz
 
 
 def tecentUrl(symbol: str, diff_days: int) -> str:
     code = ''
-    if symbol.startswith('6'):
+    if symbol.startswith('6') or symbol.startswith('110') \
+       or symbol.startswith('113'):
         code = f'sh{symbol}'
     else:
         code = f'sz{symbol}'
     ran = random.randrange(1000000, 100000000, 1)
     url = f'http://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param={code}' + \
-        f',day, , , {diff_days}, qfq & r = {ran}'
+        f',day,,,{diff_days},qfq&r={ran}'
     return url
 
 

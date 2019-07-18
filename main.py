@@ -5,6 +5,7 @@ from loguru import logger
 from config import cons as ct
 from stock import task
 from stock import basic
+from stock import price
 # 更新股票历史前复权数据任务
 
 
@@ -37,12 +38,10 @@ if __name__ == "__main__":
     logger.add(sys.stdout, colorize=True,
                format="<green>{time}</green> <level>{message}</level>",
                level="INFO")
-    if env == 'prod':
-        logger.add("idc_{time}.log",  rotation="1 day", level="INFO")
     env = ct.conf('ENV')
     logger.info(f'env is {env}')
-    basic.get_hs_cb_list()
-    exit()
+    if env == 'prod':
+        logger.add("idc_{time}.log",  rotation="1 day", level="INFO")
     # task one
     his_fq_stock_price_task()
     if len(sys.argv) > 4:
@@ -51,3 +50,5 @@ if __name__ == "__main__":
     task.run_his_dividend_stock_price_task(2)
     # task three
     task.run_stock_52week_lowprice_task()
+    # task four
+    task.run_his_cb_price_task(30)

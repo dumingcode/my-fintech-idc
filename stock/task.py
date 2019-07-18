@@ -10,6 +10,7 @@ from stock import basic
 from stock import price
 from stock import dividend_share
 from stock import quant
+from config import cons as ct
 
 # 自动任务：更新沪深股市全部上市股票past_diff_days天前的前复权数据
 
@@ -185,10 +186,17 @@ def run_his_cb_price_task(diff_days: int):
     try:
         cbs = basic.get_hs_cb_list()
         for cb in cbs:
+            code = cb['BONDCODE']
+            array = price.get_tecent_price(code, diff_days)
+            if len(array) == 0:
+                continue
+            for obj in array:
+                res = dal.updateOne(
+                    {'_id': obj['_id']}, 'hisprice', obj, True)
+            logger.info(f'fetch cbond {code} end')
             time.sleep(1)
-            psss
     except Exception as exp:
-        logger.critical(exp)
+        logger.error(exp)
         return False
     logger.info('*********run_his_cb_price_task end********')
     return True

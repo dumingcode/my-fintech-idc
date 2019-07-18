@@ -1,6 +1,7 @@
 from stock import task
 from stock import basic
 from stock import quant
+from stock import price
 
 # 校验针对个股获取历史数据
 
@@ -33,4 +34,11 @@ def test_52week_low():
 # 测试转债列表返回应该大于0
 def test_cb_list():
     arr = basic.get_hs_cb_list()
+    assert len(arr) > 0
+
+# 测试转债的价格数据获取
+
+
+def test_cb_price():
+    arr = price.get_tecent_price('113020', 5)
     assert len(arr) > 0

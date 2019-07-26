@@ -4,6 +4,8 @@ from loguru import logger
 
 from db import redisDal
 from mongo import dal
+import numpy
+import talib
 
 
 def manage52WeekLowestPrice(param):
@@ -42,3 +44,9 @@ def manage52WeekLowestPrice(param):
         logger.critical(err)
         return False
     return True
+
+
+def test_talib():
+    close = numpy.random.random(100)
+    output = talib.SMA(close)
+    return output

@@ -32,3 +32,13 @@ def queryMinLowPrice(col: str, code: str, date: int) -> []:
         result = doc
     client.close()
     return result
+
+
+def queryMany(_filter, _projection, _limit, _sort, col: str, order, batchSize):
+    client = pymongo.MongoClient(ct.conf('MONGODB')['uri'])
+    db = client.stock
+    updateResult = db[col].find(
+        filter=_filter, projection=_projection, limit=_limit, sort=_sort)
+    client.close()
+    return ((0 if updateResult.upserted_id is None else 1) +
+            updateResult.modified_count)

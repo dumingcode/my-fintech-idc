@@ -8,4 +8,5 @@ pip install pymongo
 pip install loguru
 pip install pytest
 pip install redis
+pip install TA-Lib
 ```

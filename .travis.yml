@@ -16,6 +16,7 @@ before_install:
   - ./configure --prefix=$TRAVIS_BUILD_DIR
   - make
   - make install
+  - export LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR/ta-lib
 install:
   - pip install tushare pymongo loguru pytest redis TA-Lib
 before_script:

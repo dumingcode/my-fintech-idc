@@ -8,7 +8,6 @@ from stock import price
 
 def test_given_stock_hisprice_task():
     assert task.run_his_given_stock_adj_price_task('000001', 1) is False
-    assert task.run_his_given_stock_adj_price_task('000001.SZ', 1) is True
     assert task.run_his_given_stock_adj_price_task('399300.SZ', 1) is True
 
 # history_data[history_data.ph_star==raw]['ph'].iloc[0]

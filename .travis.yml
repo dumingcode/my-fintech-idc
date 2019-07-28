@@ -10,11 +10,13 @@ before_install:
   - openssl aes-256-cbc -K $encrypted_170c7267c513_key -iv $encrypted_170c7267c513_iv -in ./config/cons_dev.py.enc -out ./config/cons_dev.py -d
   - openssl aes-256-cbc -K $encrypted_835283af109b_key -iv $encrypted_835283af109b_iv -in ./config/cons_prod.py.enc -out ./config/cons_prod.py -d
   - chmod 600 ~/.ssh/id_rsa
+install:
   - wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
   - tar -xzvf ta-lib-0.4.0-src.tar.gz
   - cd ta-lib
-  - make && make install
-install:
+  - ./configure --prefix=/usr
+  - make
+  - make install
   - pip install tushare pymongo loguru pytest redis TA-Lib
 before_script:
   - sleep 15

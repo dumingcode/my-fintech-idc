@@ -44,8 +44,6 @@ if __name__ == "__main__":
     if env == 'prod':
         logger.add("idc_{time}.log",  rotation="1 day", level="INFO")
 
-    x = quant.test_talib()
-    exit()
     # task one
     his_fq_stock_price_task()
     if len(sys.argv) > 4:
@@ -56,3 +54,5 @@ if __name__ == "__main__":
     task.run_stock_52week_lowprice_task()
     # task four
     task.run_his_cb_price_task(30)
+    # task five
+    task.run_his_cb_quant_task(20)

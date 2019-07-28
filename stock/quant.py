@@ -4,7 +4,7 @@ from loguru import logger
 
 from db import redisDal
 from mongo import dal
-import numpy
+import numpy as np
 import talib
 
 
@@ -50,3 +50,63 @@ def test_talib():
     close = numpy.random.random(100)
     output = talib.SMA(close)
     return output
+
+
+def calc_ma(code: str, diff_days: int):
+    """
+    更新转债diff_days天内MA
+    Parameters
+    ------
+    diff_days: 计算x天前的MA数据
+    Return
+    -------
+    result 是否正常结束
+    """
+    try:
+        _array = dal.queryMany({'code': code}, {'close': 1, '_id': 0},
+                               diff_days, [('date', -1)], 'hisprice')
+        array = list(_array)
+        if len(array) == 0:
+            return None
+        narray = np.array([])
+        for price in array:
+            narray = np.append(narray, price['close'])
+        ma = talib.MA(narray, timeperiod=diff_days, matype=0)
+        return ma[-1]
+    except Exception as exp:
+        logger.error(exp)
+        return None
+    return None
+
+
+def calc_atr(code: str, diff_days: int):
+    """
+    更新转债diff_days天内MA
+    Parameters
+    ------
+    diff_days: 计算x天前的MA数据
+    Return
+    -------
+    result 是否正常结束
+    """
+    try:
+        _array = dal.queryMany({'code': code}, {'close': 1, 'high': 1, 'low':
+                                                1, '_id': 0},
+                               diff_days+1, [('date', -1)], 'hisprice')
+        array = list(_array)
+        if len(array) == 0:
+            return None
+        narray_high = np.array([])
+        narray_low = np.array([])
+        narray_close = np.array([])
+        for price in array:
+            narray_high = np.append(narray_high, price['high'])
+            narray_low = np.append(narray_low, price['low'])
+            narray_close = np.append(narray_close, price['close'])
+        atr = talib.ATR(narray_high, narray_low, narray_close,
+                        timeperiod=diff_days)
+        return atr[-1]
+    except Exception as exp:
+        logger.error(exp)
+        return None
+    return None

@@ -12,6 +12,11 @@ from stock import dividend_share
 from stock import quant
 from config import cons as ct
 
+import numpy as np
+import talib
+from db import redisDal
+import json
+
 # 自动任务：更新沪深股市全部上市股票past_diff_days天前的前复权数据
 
 
@@ -199,4 +204,44 @@ def run_his_cb_price_task(diff_days: int):
         logger.error(exp)
         return False
     logger.info('*********run_his_cb_price_task end********')
+    return True
+
+
+def run_his_cb_quant_task(diff_days: int):
+    """
+    更新转债diff_days天内MA和ATR数据
+    Parameters
+    ------
+    diff_days: 计算x天前数据
+    Return
+    -------
+    result 是否正常结束
+    """
+    logger.info('********run_his_cb_quant_task start******')
+    try:
+        cbs = basic.get_hs_cb_list()
+        for cb in cbs:
+            code = cb['BONDCODE']
+            ma = quant.calc_ma(code, diff_days)
+            ma10 = quant.calc_ma(code, 10)
+            ma5 = quant.calc_ma(code, 5)
+            atr = quant.calc_atr(code, diff_days)
+            redisData = redisDal.redisHGet('xueQiuStockSet', code)
+            if redisData is None:
+                redisObj = {'code': code}
+            else:
+                redisObj = json.loads(redisData)
+            redisObj['ma20'] = ma if ma is None else round(ma, 2)
+            redisObj['ma10'] = ma10 if ma10 is None else round(ma10, 2)
+            redisObj['ma5'] = ma5 if ma5 is None else round(ma5, 2)
+            redisObj['atr'] = atr if atr is None else round(atr, 2)
+            redisObj['ma20GenDate'] = datetime.datetime.now().strftime(
+                "%Y-%m-%d %H:%M:%S")
+            redisDal.redisHSet('xueQiuStockSet', code,
+                               json.dumps(redisObj))
+            logger.info(f'atr ma {code} --{json.dumps(redisObj)}')
+    except Exception as exp:
+        logger.error(exp)
+        return False
+    logger.info('*********run_his_cb_quant_task end********')
     return True

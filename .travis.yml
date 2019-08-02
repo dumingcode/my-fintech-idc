@@ -20,8 +20,8 @@ before_install:
   - chmod 600 ~/.ssh/id_rsa
 install:
   - if [ $WITH_TA_LIBRARY = "yes" ]; then
-      chmod +x build_talib_from_source.sh
-      sh build_talib_from_source.sh $DEPS_DIR;
+      chmod +x build_talib_from_source.sh;
+      ./build_talib_from_source.sh $DEPS_DIR;
     fi
   - pip install tushare pymongo loguru pytest redis TA-Lib
 before_script:

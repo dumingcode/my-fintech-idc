@@ -5,15 +5,23 @@ python:
   - "3.7"
 services:
   - mongodb
+env:
+  global:
+    - DEPS_DIR=$TRAVIS_BUILD_DIR/dependencies
+  matrix:
+    - WITH_TA_LIBRARY=yes
+      TA_INCLUDE_PATH=$DEPS_DIR/include
+      LD_LIBRARY_PATH=$DEPS_DIR/lib
+      TA_LIBRARY_PATH=$DEPS_DIR/lib
 before_install: 
   - openssl aes-256-cbc -K $encrypted_383bc2ea2d21_key -iv $encrypted_383bc2ea2d21_iv -in id_rsa.enc -out ~/.ssh/id_rsa -d
   - openssl aes-256-cbc -K $encrypted_170c7267c513_key -iv $encrypted_170c7267c513_iv -in ./config/cons_dev.py.enc -out ./config/cons_dev.py -d
   - openssl aes-256-cbc -K $encrypted_835283af109b_key -iv $encrypted_835283af109b_iv -in ./config/cons_prod.py.enc -out ./config/cons_prod.py -d
   - chmod 600 ~/.ssh/id_rsa
-  - wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
-  - tar -xzvf ta-lib-0.4.0-src.tar.gz
-  - cd ta-lib/ && ./configure --prefix=/usr LDFLAGS="-lm" && make &&  make  install && cd .. && rm -rf ta-lib
 install:
+  - if [ $WITH_TA_LIBRARY = "yes" ]; then
+      ./build_talib_from_source.bash $DEPS_DIR;
+    fi
   - pip install tushare pymongo loguru pytest redis TA-Lib
 before_script:
   - sleep 15

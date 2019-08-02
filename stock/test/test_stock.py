@@ -22,11 +22,11 @@ def test_stock_list_hs300():
     })
     assert df[df.ts_code == '399300.SZ']['symbol'].iloc[0] == '399300'
 
-# 校验53周最低价生成
+# 校验52周最低价生成
 
 
 def test_52week_low():
-    assert quant.manage52WeekLowestPrice({'code': '000001'}) is True
+    assert quant.manage52WeekLowestPrice({'code': '000001'}) is False
 
 
 # 测试转债列表返回应该大于0

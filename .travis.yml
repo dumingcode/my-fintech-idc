@@ -12,11 +12,7 @@ before_install:
   - chmod 600 ~/.ssh/id_rsa
   - wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
   - tar -xzvf ta-lib-0.4.0-src.tar.gz
-  - cd ta-lib
-  - ./configure --prefix=$TRAVIS_BUILD_DIR --libdir=$TRAVIS_BUILD_DIR/ta-lib
-  - make
-  - make install
-  - export LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR/ta-lib
+  - cd ta-lib/ && ./configure --prefix=/usr LDFLAGS="-lm" && make &&  make  install && cd .. && rm -rf ta-lib
 install:
   - pip install tushare pymongo loguru pytest redis TA-Lib
 before_script:

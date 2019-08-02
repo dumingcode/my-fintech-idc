@@ -13,7 +13,7 @@ before_install:
   - wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
   - tar -xzvf ta-lib-0.4.0-src.tar.gz
   - cd ta-lib
-  - ./configure --prefix=$TRAVIS_BUILD_DIR
+  - ./configure --prefix=$TRAVIS_BUILD_DIR --libdir=$TRAVIS_BUILD_DIR/ta-lib
   - make
   - make install
   - export LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR/ta-lib

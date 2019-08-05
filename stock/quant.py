@@ -108,7 +108,10 @@ def calc_atr(code: str, diff_days: int):
             narray_close = np.append(narray_close, price['close'])
         atr = talib.ATR(narray_high, narray_low, narray_close,
                         timeperiod=diff_days)
-        return atr[-1]
+        if np.isnan(atr[-1]):
+            return None
+        else:
+            return atr[-1]
     except Exception as exp:
         logger.error(exp)
         return None

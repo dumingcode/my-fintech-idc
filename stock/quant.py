@@ -72,7 +72,10 @@ def calc_ma(code: str, diff_days: int):
         for price in array:
             narray = np.append(narray, price['close'])
         ma = talib.MA(narray, timeperiod=diff_days, matype=0)
-        return ma[-1]
+        if np.isnan(ma[-1]):
+            return None
+        else:
+            return ma[-1]
     except Exception as exp:
         logger.error(exp)
         return None

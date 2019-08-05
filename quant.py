@@ -16,6 +16,8 @@ if __name__ == "__main__":
     logger.info(f'env is {env}')
 
     # task two
-    task.run_his_dividend_stock_price_task(2)
+    # task.run_his_dividend_stock_price_task(2)
     # task three
-    task.run_stock_52week_lowprice_task()
+    # task.run_stock_52week_lowprice_task()
+    # task four
+    task.run_his_cb_quant_task(20)

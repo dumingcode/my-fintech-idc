@@ -231,10 +231,10 @@ def run_his_cb_quant_task(diff_days: int):
                 redisObj = {'code': code}
             else:
                 redisObj = json.loads(redisData)
-            redisObj['ma20'] = '' if ma is None else round(ma, 2)
-            redisObj['ma10'] = '' if ma10 is None else round(ma10, 2)
-            redisObj['ma5'] = '' if ma5 is None else round(ma5, 2)
-            redisObj['atr'] = '' if atr is None else round(atr, 2)
+            redisObj['ma20'] = round(ma, 2) if ma else ''
+            redisObj['ma10'] = round(ma10, 2) if ma10 else ''
+            redisObj['ma5'] = round(ma5, 2) if ma5 else ''
+            redisObj['atr'] = round(atr, 2) if atr else ''
             redisObj['ma20GenDate'] = datetime.datetime.now().strftime(
                 "%Y-%m-%d %H:%M:%S")
             redisDal.redisHSet('xueQiuStockSet', code,

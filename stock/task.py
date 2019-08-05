@@ -198,8 +198,8 @@ def run_his_cb_price_task(diff_days: int):
             for obj in array:
                 res = dal.updateOne(
                     {'_id': obj['_id']}, 'hisprice', obj, True)
-            logger.info(f'fetch cbond {code} end')
             time.sleep(1)
+            logger.info(f'fetch cbond {code} end')
     except Exception as exp:
         logger.error(exp)
         return False
@@ -231,10 +231,10 @@ def run_his_cb_quant_task(diff_days: int):
                 redisObj = {'code': code}
             else:
                 redisObj = json.loads(redisData)
-            redisObj['ma20'] = ma if ma is None else round(ma, 2)
-            redisObj['ma10'] = ma10 if ma10 is None else round(ma10, 2)
-            redisObj['ma5'] = ma5 if ma5 is None else round(ma5, 2)
-            redisObj['atr'] = atr if atr is None else round(atr, 2)
+            redisObj['ma20'] = '' if ma is None else round(ma, 2)
+            redisObj['ma10'] = '' if ma10 is None else round(ma10, 2)
+            redisObj['ma5'] = '' if ma5 is None else round(ma5, 2)
+            redisObj['atr'] = '' if atr is None else round(atr, 2)
             redisObj['ma20GenDate'] = datetime.datetime.now().strftime(
                 "%Y-%m-%d %H:%M:%S")
             redisDal.redisHSet('xueQiuStockSet', code,

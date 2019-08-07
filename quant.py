@@ -4,6 +4,7 @@ from loguru import logger
 
 from config import cons as ct
 from stock import task
+from house import house_task
 
 if __name__ == "__main__":
     logger.add(sys.stderr, format='{time} {level} {message}',
@@ -20,4 +21,4 @@ if __name__ == "__main__":
     # task three
     # task.run_stock_52week_lowprice_task()
     # task four
-    task.run_his_cb_quant_task(20)
+    house_task.run_house_extract_localhis_data_task()

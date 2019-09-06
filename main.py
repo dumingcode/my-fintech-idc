@@ -44,6 +44,9 @@ if __name__ == "__main__":
     if env == 'prod':
         logger.add("idc_{time}.log",  rotation="1 day", level="INFO")
 
+    quant.calc_user_stock_cover_index()
+    exit()
+
     # task one
     his_fq_stock_price_task()
     if len(sys.argv) > 4:

@@ -116,3 +116,34 @@ def calc_atr(code: str, diff_days: int):
         logger.error(exp)
         return None
     return None
+
+
+def calc_user_stock_cover_index():
+    """
+    统计更新用户的持仓，计算持仓跟各大指数的重合度
+    Parameters
+    ------
+    Return
+    -------
+    result 是否正常结束
+    """
+    try:
+        _array = dal.queryMany(None, {'_id': 1, 'samples': 1},
+                               0, None, 'indexSample')
+        array = list(_array)
+        if len(array) == 0:
+            return None
+
+        opt_stock_array = dal.queryMany(None, {'_id': 1, 'stock': 1},
+                                        0, None, 'optStock')
+        if len(opt_stock_array) == 0:
+            return None
+
+        for indexSample in array:
+            pass
+
+            # res = dal.updateOne({'_id': int(date)}, 'optQuant', obj, True)
+    except Exception as exp:
+        logger.error(exp)
+        return None
+    return None

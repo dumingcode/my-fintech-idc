@@ -133,17 +133,49 @@ def calc_user_stock_cover_index():
         array = list(_array)
         if len(array) == 0:
             return None
-
-        opt_stock_array = dal.queryMany(None, {'_id': 1, 'stock': 1},
-                                        0, None, 'optStock')
+        _opt_stock_array = dal.queryMany(None, {'_id': 1, 'stock': 1},
+                                         0, None, 'optStock')
+        opt_stock_array = list(_opt_stock_array)
         if len(opt_stock_array) == 0:
             return None
 
-        for indexSample in array:
-            pass
-
-            # res = dal.updateOne({'_id': int(date)}, 'optQuant', obj, True)
+        for opt_stock in opt_stock_array:
+            user_id = opt_stock['_id']
+            user_stock = opt_stock['stock']
+            user_quant = {}
+            user_quant['user'] = user_id
+            for index_sample in array:
+                index_name = index_sample['_id']
+                user_quant['_id'] = f'{user_id}_{index_name}'
+                calc_opt_stock_in_index_sample(
+                    user_stock, index_sample['samples'], user_quant)
+                dal.updateOne(
+                    {'_id': user_quant['_id']}, 'optQuant', user_quant, True)
+                logger.info(user_quant)
     except Exception as exp:
         logger.error(exp)
         return None
     return None
+
+
+def calc_opt_stock_in_index_sample(opt_stock_str: str, index_sample: list,
+                                   user_quant: dict):
+    """
+    具体计算用户的自选股和指数的重合数量和具体重合标的
+    """
+    opt_stocks = opt_stock_str.split(',')
+    hit_count = 0
+    opt_stock_index_hit = ''
+    for opt_stock in opt_stocks:
+        try:
+            if index_sample.index(opt_stock) >= 0:
+                opt_stock_index_hit += opt_stock
+                opt_stock_index_hit += ','
+                hit_count += 1
+        except ValueError as exp:
+            pass
+    if hit_count >= 1:
+        opt_stock_index_hit = opt_stock_index_hit[0: len(
+            opt_stock_index_hit)-1]
+    user_quant['num'] = hit_count
+    user_quant['hit_stocks'] = opt_stock_index_hit

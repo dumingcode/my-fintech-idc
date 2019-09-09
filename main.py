@@ -44,9 +44,6 @@ if __name__ == "__main__":
     if env == 'prod':
         logger.add("idc_{time}.log",  rotation="1 day", level="INFO")
 
-    quant.calc_user_stock_cover_index()
-    exit()
-
     # task one
     his_fq_stock_price_task()
     if len(sys.argv) > 4:
@@ -59,3 +56,5 @@ if __name__ == "__main__":
     task.run_his_cb_price_task(30)
     # task five
     task.run_his_cb_quant_task(20)
+    # taks six 统计自选股中占各个指数的数量
+    task.run_opt_stock_index_sample_task()

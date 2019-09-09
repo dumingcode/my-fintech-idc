@@ -245,3 +245,17 @@ def run_his_cb_quant_task(diff_days: int):
         return False
     logger.info('*********run_his_cb_quant_task end********')
     return True
+
+
+def run_opt_stock_index_sample_task():
+    """
+    统计账户中自选股与各个指数的重合度
+    Parameters
+    ------
+    Return
+    -------
+    result 是否正常结束
+    """
+    logger.info('********run_opt_stock_index_sample_task start******')
+    quant.calc_user_stock_cover_index()
+    logger.info('********run_opt_stock_index_sample_task end******')

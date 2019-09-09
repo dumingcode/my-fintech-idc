@@ -25,8 +25,8 @@ def test_stock_list_hs300():
 # 校验52周最低价生成
 
 
-def test_52week_low():
-    assert quant.manage52WeekLowestPrice({'code': '000001'}) is False
+# def test_52week_low():
+#     assert quant.manage52WeekLowestPrice({'code': '000001'}) is False
 
 
 # 测试转债列表返回应该大于0

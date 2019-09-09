@@ -13,17 +13,17 @@ env:
       TA_INCLUDE_PATH=$DEPS_DIR/include
       LD_LIBRARY_PATH=$DEPS_DIR/lib
       TA_LIBRARY_PATH=$DEPS_DIR/lib
-before_install: 
+before_install:
   - openssl aes-256-cbc -K $encrypted_383bc2ea2d21_key -iv $encrypted_383bc2ea2d21_iv -in id_rsa.enc -out ~/.ssh/id_rsa -d
   - openssl aes-256-cbc -K $encrypted_170c7267c513_key -iv $encrypted_170c7267c513_iv -in ./config/cons_dev.py.enc -out ./config/cons_dev.py -d
   - openssl aes-256-cbc -K $encrypted_835283af109b_key -iv $encrypted_835283af109b_iv -in ./config/cons_prod.py.enc -out ./config/cons_prod.py -d
   - chmod 600 ~/.ssh/id_rsa
 install:
   - if [ $WITH_TA_LIBRARY = "yes" ]; then
-      chmod +x build_talib_from_source.sh;
-      ./build_talib_from_source.sh $DEPS_DIR;
+    chmod +x build_talib_from_source.sh;
+    ./build_talib_from_source.sh $DEPS_DIR;
     fi
-  - pip install tushare pymongo loguru pytest redis TA-Lib
+  - pip install pandas tushare pymongo loguru pytest redis TA-Lib
 before_script:
   - sleep 15
   - mongo stock --eval 'db.createCollection("hisprice");'

@@ -23,9 +23,9 @@ install:
     chmod +x build_talib_from_source.sh;
     ./build_talib_from_source.sh $DEPS_DIR;
     fi
-  - pip install pandas tushare pymongo loguru pytest redis TA-Lib
+  - pip install lxml pandas tushare pymongo loguru pytest redis TA-Lib
 before_script:
-  - sleep 45
+  - sleep 20
   - mongo stock --eval 'db.createCollection("hisprice");'
   - sudo redis-server /etc/redis/redis.conf
 script: pytest

@@ -23,7 +23,7 @@ install:
     chmod +x build_talib_from_source.sh;
     ./build_talib_from_source.sh $DEPS_DIR;
     fi
-  - pip install lxml pandas tushare pymongo loguru pytest redis TA-Lib
+  - pip install -r requirements.txt
 before_script:
   - sleep 20
   - mongo stock --eval 'db.createCollection("hisprice");'

@@ -25,10 +25,10 @@ install:
     fi
   - pip install pandas tushare pymongo loguru pytest redis TA-Lib
 before_script:
-  - sleep 15
+  - sleep 45
   - mongo stock --eval 'db.createCollection("hisprice");'
   - sudo redis-server /etc/redis/redis.conf
-#script: pytest
+script: pytest
 deploy:
   provider: script
   skip_cleanup: true

@@ -146,6 +146,7 @@ def calc_user_stock_cover_index():
             user_quant['user'] = user_id
             for index_sample in array:
                 index_name = index_sample['_id']
+                user_quant['index'] = index_name
                 user_quant['_id'] = f'{user_id}_{index_name}'
                 calc_opt_stock_in_index_sample(
                     user_stock, index_sample['samples'], user_quant)

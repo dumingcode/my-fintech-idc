@@ -7,6 +7,8 @@ from mongo import dal
 import numpy as np
 import talib
 
+from stock import basic
+
 
 def manage52WeekLowestPrice(param):
     """
@@ -128,6 +130,16 @@ def calc_user_stock_cover_index():
     result 是否正常结束
     """
     try:
+        # 用户持仓个股增加股票名称
+        param = {
+            'list_status': 'L',
+            'exchange': '',
+            'fields': 'symbol,name'
+        }
+        hs_df = basic.get_hs_stock_list(param)
+        globalStock = {}
+        for index, row in hs_df.iterrows():
+            globalStock[row['symbol']] = row['name']
         _array = dal.queryMany(None, {'_id': 1, 'samples': 1},
                                0, None, 'indexSample')
         array = list(_array)
@@ -149,7 +161,7 @@ def calc_user_stock_cover_index():
                 user_quant['index'] = index_name
                 user_quant['_id'] = f'{user_id}_{index_name}'
                 calc_opt_stock_in_index_sample(
-                    user_stock, index_sample['samples'], user_quant)
+                    user_stock, index_sample['samples'], user_quant, globalStock)
                 dal.updateOne(
                     {'_id': user_quant['_id']}, 'optQuant', user_quant, True)
                 logger.info(user_quant)
@@ -160,7 +172,7 @@ def calc_user_stock_cover_index():
 
 
 def calc_opt_stock_in_index_sample(opt_stock_str: str, index_sample: list,
-                                   user_quant: dict):
+                                   user_quant: dict, globalStock: dict):
     """
     具体计算用户的自选股和指数的重合数量和具体重合标的
     """
@@ -170,7 +182,9 @@ def calc_opt_stock_in_index_sample(opt_stock_str: str, index_sample: list,
     for opt_stock in opt_stocks:
         try:
             if index_sample.index(opt_stock) >= 0:
-                opt_stock_index_hit += opt_stock
+                name = globalStock[opt_stock]
+                opt_stock_index_hit += f'{opt_stock}{name}'
+
                 opt_stock_index_hit += ','
                 hit_count += 1
         except ValueError as exp:
@@ -180,3 +194,5 @@ def calc_opt_stock_in_index_sample(opt_stock_str: str, index_sample: list,
             opt_stock_index_hit)-1]
     user_quant['num'] = hit_count
     user_quant['hit_stocks'] = opt_stock_index_hit
+    user_quant['date'] = datetime.datetime.now().strftime(
+        "%Y-%m-%d %H:%M:%S")

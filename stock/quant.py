@@ -196,3 +196,42 @@ def calc_opt_stock_in_index_sample(opt_stock_str: str, index_sample: list,
     user_quant['hit_stocks'] = opt_stock_index_hit
     user_quant['date'] = datetime.datetime.now().strftime(
         "%Y-%m-%d %H:%M:%S")
+
+
+def calcIndustrySample():
+    """
+        更新个股的国证二级、三级行业分类
+    Parameters
+    ------
+        Dict
+
+    Return
+    -------
+        True 成功
+        False 失败
+    """
+    try:
+        indSamples_ = dal.queryMany(None, {'_id': 1, 'samples': 1},
+                                    0, None, 'industrySample')
+        indSamples = list(indSamples_)
+        if len(array) == 0:
+            return None
+        for indSample in indSamples:
+            for code in indSample.samples:
+                redisData = redisDal.redisHGet('xueQiuStockSet', code)
+                ind = indSample['_id']
+                if redisData is None:
+                    redisObj = {'code': code, 'low': lowestPrice['min_value']}
+                else:
+                    redisObj = json.loads(redisData)
+                    redisObj['low'] = lowestPrice['min_value']
+                redisObj['lowGenDate'] = datetime.datetime.now().strftime(
+                    "%Y-%m-%d %H:%M:%S")
+                if lowestPrice['min_value'] > 0:
+                    redisDal.redisHSet(
+                        'xueQiuStockSet', code, json.dumps(redisObj))
+                    logger.info(f'52 week low {code} --{json.dumps(redisObj)}')
+    except Exception as err:
+        logger.critical(err)
+        return False
+    return True

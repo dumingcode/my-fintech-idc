@@ -3,6 +3,8 @@ cache: pip
 language: python
 python:
   - "3.7"
+on:
+  branch: master
 services:
   - mongodb
 env:

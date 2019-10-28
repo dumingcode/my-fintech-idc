@@ -22,4 +22,6 @@ if __name__ == "__main__":
     # task.run_stock_52week_lowprice_task()
     # task four
     # house_task.run_house_extract_localhis_data_task()
-    task.run_opt_stock_index_sample_task()
+    # task.run_opt_stock_index_sample_task()
+
+    task.run_stock_ind_sample_task()

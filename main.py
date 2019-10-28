@@ -1,4 +1,5 @@
 import sys
+import time
 
 from loguru import logger
 
@@ -58,3 +59,7 @@ if __name__ == "__main__":
     task.run_his_cb_quant_task(20)
     # taks six 统计自选股中占各个指数的数量
     task.run_opt_stock_index_sample_task()
+    # task seven 统计个股国证二级三级分类 每周6跑一次
+    curWeek = int(time.strftime("%w"))
+    if curWeek == 6:
+        task.run_stock_ind_sample_task()

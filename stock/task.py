@@ -259,3 +259,19 @@ def run_opt_stock_index_sample_task():
     logger.info('********run_opt_stock_index_sample_task start******')
     quant.calc_user_stock_cover_index()
     logger.info('********run_opt_stock_index_sample_task end******')
+
+
+def run_stock_ind_sample_task():
+    """
+        更新沪深股市上市公司国证行业指数分类数据
+    Parameters
+    ------
+    Return
+    -------
+        result 是否正常结束
+    """
+    try:
+        quant.calcIndustrySample()
+    except Exception as exp:
+        logger.error(exp)
+    return True

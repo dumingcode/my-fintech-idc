@@ -203,7 +203,7 @@ def calcIndustrySample():
         更新个股的国证二级、三级行业分类
     Parameters
     ------
-        Dict
+        stock_code 股票代码
 
     Return
     -------
@@ -214,23 +214,21 @@ def calcIndustrySample():
         indSamples_ = dal.queryMany(None, {'_id': 1, 'samples': 1},
                                     0, None, 'industrySample')
         indSamples = list(indSamples_)
-        if len(array) == 0:
-            return None
         for indSample in indSamples:
-            for code in indSample.samples:
-                redisData = redisDal.redisHGet('xueQiuStockSet', code)
-                ind = indSample['_id']
+            for stock_code in indSample['samples']:
+                redisData = redisDal.redisHGet('xueQiuStockSet', stock_code)
                 if redisData is None:
-                    redisObj = {'code': code, 'low': lowestPrice['min_value']}
+                    redisObj = {'code': stock_code}
                 else:
                     redisObj = json.loads(redisData)
-                    redisObj['low'] = lowestPrice['min_value']
-                redisObj['lowGenDate'] = datetime.datetime.now().strftime(
-                    "%Y-%m-%d %H:%M:%S")
-                if lowestPrice['min_value'] > 0:
-                    redisDal.redisHSet(
-                        'xueQiuStockSet', code, json.dumps(redisObj))
-                    logger.info(f'52 week low {code} --{json.dumps(redisObj)}')
+                ind = indSample['_id']
+                if len(ind) == 5:
+                    redisObj['gz2'] = ind
+                elif len(ind) == 7:
+                    redisObj['gz3'] = ind
+                redisDal.redisHSet(
+                    'xueQiuStockSet', stock_code, json.dumps(redisObj))
+                logger.info(f'calcIndustrySample {stock_code} --{ind}')
     except Exception as err:
         logger.critical(err)
         return False

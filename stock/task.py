@@ -275,3 +275,24 @@ def run_stock_ind_sample_task():
     except Exception as exp:
         logger.error(exp)
     return True
+
+
+def run_stock_alpha_beta_task():
+    """
+        更新沪深股市上市公司相对沪深300的alpha beta
+    Parameters
+    ------
+    Return
+    -------
+        result 是否正常结束
+    """
+    param = {
+        'list_status': 'L',
+        'exchange': '',
+        'fields': 'symbol'
+    }
+    hs_df = basic.get_hs_stock_list(param)
+    for index, row in hs_df.iterrows():
+        code = row['symbol']
+        quant.calc_alpha_beta(code, 500)
+    return True

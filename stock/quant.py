@@ -8,6 +8,8 @@ import numpy as np
 import talib
 
 from stock import basic
+from sklearn import linear_model
+import pandas as pd
 
 
 def manage52WeekLowestPrice(param):
@@ -233,3 +235,92 @@ def calcIndustrySample():
         logger.critical(err)
         return False
     return True
+
+
+def query_stock_days_price_chg(code: str, diff_days: int):
+    """
+    查询diff_days天内个股的价格波动率
+    Parameters
+    ------
+    diff_days: 计算x天前
+    code: 个股代码 600030
+    Return
+    ------- Data Frame
+    ------- index date
+    ------- pct
+    result dataFrame
+    """
+    try:
+        _array = dal.queryMany({'code': code}, {
+            'pct_chg': 1, 'date': 1, '_id': 0}, diff_days+1,
+            [('date', -1)], 'hisprice')
+        array = list(_array)
+        if len(array) == 0:
+            return None
+        narray_pct = np.array([])
+        narray_date = np.array([])
+        narray_date.dtype = 'int32'
+        for price in array:
+            narray_pct = np.append(narray_pct, price['pct_chg'])
+            narray_date = np.append(narray_date, price['date'])
+        df = pd.DataFrame(narray_pct, index=narray_date, columns=['pct'])
+        return df
+    except Exception as exp:
+        logger.error(exp)
+        return None
+
+
+def calc_alpha_beta(code: str, diff_days: int):
+    """
+    计算diff_days天内alpha、beta
+    Parameters
+    ------
+    diff_days: 计算x天前的alpha beta数据
+    Return
+    -------
+    result 是否正常结束
+    """
+    try:
+        benchmark_pd = query_stock_days_price_chg('399300', diff_days)
+        stock_pd = query_stock_days_price_chg(code, diff_days)
+        if stock_pd is None:
+            return None
+        innerPd = stock_pd.join(benchmark_pd, how='inner',
+                                lsuffix='stock', rsuffix='benchmark')
+        innerPd = innerPd.dropna()
+        reg = linear_model.LinearRegression()
+        reg.fit(innerPd[['pctbenchmark']].values,
+                innerPd['pctstock'].values)
+        # 计算2年数据
+        beta2 = reg.coef_[0]
+        alpha2 = reg.intercept_ / 100
+        RR2 = reg.score(innerPd[['pctbenchmark']].values,
+                        innerPd['pctstock'].values)
+
+        past = int((datetime.date.today() -
+                    datetime.timedelta(diff_days / 2)).strftime('%Y%m%d'))
+        innerPd = innerPd[innerPd.index > past]
+        reg.fit(innerPd[['pctbenchmark']].values,
+                innerPd['pctstock'].values)
+        # 计算1年数据
+        beta1 = reg.coef_[0]
+        alpha1 = reg.intercept_ / 100
+        RR1 = reg.score(innerPd[['pctbenchmark']].values,
+                        innerPd['pctstock'].values)
+        redisData = redisDal.redisHGet('xueQiuStockSet', code)
+        logger.info(
+            f'{code} alpha1 {alpha1} beta1 {beta1} r1 {RR1} alpha2 {alpha2} \
+            beta2 {beta2} r1 {RR2}')
+        if redisData is not None:
+            redisObj = json.loads(redisData)
+            redisObj['alphaBeta2Year'] = json.dumps({
+                'alpha': alpha2, 'beta': beta2, 'r2': RR2})
+            redisObj['alphaBeta1Year'] = json.dumps({
+                'alpha': alpha1, 'beta': beta1, 'r2': RR1})
+            redisObj['alphaBetaGenDate'] = datetime.datetime.now().strftime(
+                '%Y-%m-%d %H:%M:%S')
+            redisDal.redisHSet('xueQiuStockSet', code, json.dumps(redisObj))
+    except Exception as exp:
+        logger.error(exp)
+        return None
+    return None

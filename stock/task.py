@@ -294,5 +294,5 @@ def run_stock_alpha_beta_task():
     hs_df = basic.get_hs_stock_list(param)
     for index, row in hs_df.iterrows():
         code = row['symbol']
-        quant.calc_alpha_beta(code, 500)
+        quant.calc_alpha_beta(code, 460)
     return True

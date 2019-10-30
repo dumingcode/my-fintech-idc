@@ -63,3 +63,5 @@ if __name__ == "__main__":
     curWeek = int(time.strftime("%w"))
     if curWeek == 6:
         task.run_stock_ind_sample_task()
+    # task eight 更新alpha beta
+    task.run_stock_alpha_beta_task()

@@ -39,7 +39,7 @@ def get_recent_dividend_share_stocks(diff_days: int = 5) -> []:
         except Exception as err:
             logger.critical(err)
             continue
-        logger.info(f'{code} is running dividend share task')
+    logger.info('dividend stock list:')
     logger.info(stock_list)
     return stock_list
 
@@ -54,7 +54,10 @@ def is_stock_recent_dividend(code: str, diff_days: int) -> bool:
     ret_jsons = json.loads(html.text)
     query_code = f'sh{code}' if code.startswith('6') else f'sz{code}'
     try:
-        qfqdays = ret_jsons['data'][query_code]['qfqday']
+        if code.startswith('68'):
+            qfqdays = ret_jsons['data'][query_code]['day']
+        else:
+            qfqdays = ret_jsons['data'][query_code]['qfqday']
     except KeyError:
         logger.critical(f'{query_code} data invalid')
         return

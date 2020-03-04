@@ -78,7 +78,8 @@ def get_hs_cb_list(type: str = 'cb', status: str = 'L') -> []:
                             sjson['CORRESNAME'], 'SWAPSCODE':
                             sjson['SWAPSCODE'], 'SECURITYSHORTNAME':
                             sjson['SECURITYSHORTNAME'], 'SNAME':
-                            sjson['SNAME'], 'STARTDATE': sjson['STARTDATE']
+                            sjson['SNAME'], 'STARTDATE': sjson['STARTDATE'],
+                            'LISTDATE': sjson['LISTDATE']
                             })
             except Exception as err:
                 logger.error(

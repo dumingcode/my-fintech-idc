@@ -65,3 +65,5 @@ if __name__ == "__main__":
         task.run_stock_ind_sample_task()
     # task eight 更新alpha beta
     task.run_stock_alpha_beta_task()
+    # task nine 更新转债基础信息数据
+    task.run_his_cb_basic_ino_task()

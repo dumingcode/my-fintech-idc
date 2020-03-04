@@ -296,3 +296,28 @@ def run_stock_alpha_beta_task():
         code = row['symbol']
         quant.calc_alpha_beta(code, 460)
     return True
+
+
+def run_his_cb_basic_ino_task():
+    """
+    更新沪深股市转债基础信息代码表
+    Parameters
+    ------
+    Return
+    -------
+    result 是否正常结束
+    """
+    logger.info('********run_his_cb_basic_ino_task start******')
+    try:
+        cbs = basic.get_hs_cb_list()
+        for cb in cbs:
+            code = cb['BONDCODE']
+            res = dal.updateOne(
+                {'_id': code}, 'cbBasicInfo', cb, True)
+            time.sleep(2)
+            logger.info(f'fetch cbond basic info {code} end')
+    except Exception as exp:
+        logger.error(exp)
+        return False
+    logger.info('*********run_his_cb_basic_ino_task end********')
+    return True

@@ -3,11 +3,6 @@ import json
 from loguru import logger
 
 
-def test_es_delete_index():
-    res = es.delete_index('test')
-    print(res)
-    assert res['acknowledged'] is True
-
 
 def test_es_create_index_setting():
     settings = {
@@ -97,6 +92,12 @@ def test_insert_document():
 def test_delete_document():
     res = es.delete_document('test', '128103')
     assert res is not None
+
+
+def test_es_delete_index():
+    res = es.delete_index('test')
+    print(res)
+    assert res['acknowledged'] is True
 
 
 '''

@@ -1,5 +1,6 @@
 from elasticsearch import es
 import json
+from loguru import logger
 
 
 def test_es_delete_index():
@@ -16,19 +17,12 @@ def test_es_create_index_setting():
             "index": {
                 "analysis": {
                     "analyzer": {
-                        "ik_pinyin_analyzer": {
-                            "type": "custom",
-                            "tokenizer": "ik_max_word",
-                            "filter": "pinyin_filter"
-                        },
-                        "ik_pinyin_analyzer_search": {
-                            "type": "custom",
-                            "tokenizer": "ik_smart",
-                            "filter": "pinyin_filter"
+                        "pinyin_analyzer": {
+                            "tokenizer": "pinyin_tokenizer"
                         }
                     },
-                    "filter": {
-                        "pinyin_filter": {
+                    "tokenizer": {
+                        "pinyin_tokenizer": {
                             "type": "pinyin",
                             "keep_separate_first_letter": False,
                             "keep_first_letter": True,
@@ -50,13 +44,13 @@ def test_es_create_mapping():
             "properties": {
                 "bondname": {
                     "type": "text",
-                    "analyzer": "ik_pinyin_analyzer",
-                    "search_analyzer": "ik_pinyin_analyzer_search"
+                    "analyzer": "pinyin_analyzer",
+                    "search_analyzer": "pinyin_analyzer"
                 },
                 "stockname": {
                     "type": "text",
-                    "analyzer": "ik_pinyin_analyzer",
-                    "search_analyzer": "ik_pinyin_analyzer_search"
+                    "analyzer": "pinyin_analyzer",
+                    "search_analyzer": "pinyin_analyzer"
                 },
                 "bondcode": {
                     "type": "keyword"
@@ -100,4 +94,23 @@ def test_insert_document():
     assert res is not None
 
 
-# {"query":{"bool":{"must":{"multi_match":  {"query":"trzz","type":"best_fields","analyzer":"ik_pinyin_analyzer"}}}}}
+def test_delete_document():
+    res = es.delete_document('test', '128103')
+    assert res is not None
+
+
+'''
+{
+  "query": {
+    "bool": {
+      "must": {
+        "multi_match": {
+          "query": "huati",
+          "type": "best_fields",
+          "analyzer": "pinyin_analyzer"
+        }
+      }
+    }
+  }
+}
+'''

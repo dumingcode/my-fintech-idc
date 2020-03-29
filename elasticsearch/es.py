@@ -67,3 +67,15 @@ def insert_document(index_name: str, document: str, key: str):
         logger.error(err)
         return None
     return ret_jsons
+
+
+def delete_document(index_name: str, key: str):
+    ret_jsons = None
+    try:
+        html = requests.delete(
+            ct.conf('ES')['url'] + index_name + '/_doc/' + key)
+        ret_jsons = json.loads(html.text)
+    except Exception as err:
+        logger.error(err)
+        return None
+    return ret_jsons

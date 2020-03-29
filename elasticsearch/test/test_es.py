@@ -3,7 +3,6 @@ import json
 from loguru import logger
 
 
-
 def test_es_create_index_setting():
     settings = {
         "settings": {

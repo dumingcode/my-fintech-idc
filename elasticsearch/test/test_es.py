@@ -2,13 +2,13 @@ from elasticsearch import es
 import json
 
 
-def te1st_es_delete_index():
+def test_es_delete_index():
     res = es.delete_index('test')
     print(res)
     assert res['acknowledged'] is True
 
 
-def tes1t_es_create_index_setting():
+def test_es_create_index_setting():
     settings = {
         "settings": {
             "number_of_shards": "3",
@@ -20,13 +20,19 @@ def tes1t_es_create_index_setting():
                             "type": "custom",
                             "tokenizer": "ik_max_word",
                             "filter": "pinyin_filter"
+                        },
+                        "ik_pinyin_analyzer_search": {
+                            "type": "custom",
+                            "tokenizer": "ik_smart",
+                            "filter": "pinyin_filter"
                         }
                     },
                     "filter": {
                         "pinyin_filter": {
                             "type": "pinyin",
                             "keep_separate_first_letter": False,
-                            "keep_first_letter": True
+                            "keep_first_letter": True,
+                            "keep_joined_full_pinyin ": True
                         }
                     }
                 }
@@ -38,16 +44,24 @@ def tes1t_es_create_index_setting():
     assert res['acknowledged'] is True
 
 
-def tes1t_es_create_mapping():
+def test_es_create_mapping():
     mappings = {
         "_doc": {
             "properties": {
-                "name": {
+                "bondname": {
                     "type": "text",
                     "analyzer": "ik_pinyin_analyzer",
-                    "search_analyzer": "ik_pinyin_analyzer"
+                    "search_analyzer": "ik_pinyin_analyzer_search"
                 },
-                "code": {
+                "stockname": {
+                    "type": "text",
+                    "analyzer": "ik_pinyin_analyzer",
+                    "search_analyzer": "ik_pinyin_analyzer_search"
+                },
+                "bondcode": {
+                    "type": "keyword"
+                },
+                "stockcode": {
                     "type": "keyword"
                 }
             }
@@ -60,21 +74,30 @@ def tes1t_es_create_mapping():
 
 def test_insert_document():
     document = {
-        'code': '110064',
-        'name': '建工转债'
+        'bondcode': '110064',
+        'bondname': '建工转债',
+        'stockcode': '600939',
+        'stockname': '重庆建工'
     }
-    res = es.insert_document('test', json.dumps(document), document['code'])
+    res = es.insert_document('test', json.dumps(
+        document), document['bondcode'])
     document = {
-        'code': '127015',
-        'name': '希望转债'
+        'bondcode': '113574',
+        'bondname': '华体转债',
+        'stockcode': '603679',
+        'stockname': '华体科技'
     }
-    res = es.insert_document('test', json.dumps(document), document['code'])
+    res = es.insert_document('test', json.dumps(
+        document), document['bondcode'])
     document = {
-        'code': '128092',
-        'name': '唐人转债'
+        'bondcode': '128103',
+        'bondname': '同德转债',
+        'stockcode': '002360',
+        'stockname': '同德化工'
     }
-    res = es.insert_document('test', json.dumps(document), document['code'])
+    res = es.insert_document('test', json.dumps(
+        document), document['bondcode'])
     assert res is not None
 
 
-# {"query":{"bool":{"must":{"multi_match":{"query":"trzz","type":"best_fields","analyzer":"ik_pinyin_analyzer"}}}}}
+# {"query":{"bool":{"must":{"multi_match":  {"query":"trzz","type":"best_fields","analyzer":"ik_pinyin_analyzer"}}}}}

@@ -4,6 +4,7 @@ from loguru import logger
 
 from config import cons as ct
 from elasticsearch import init_es
+from stock import task
 
 if __name__ == "__main__":
     logger.add(sys.stderr, format='{time} {level} {message}',
@@ -17,3 +18,4 @@ if __name__ == "__main__":
 
     init_es.init_cbond_es()
     init_es.init_stock_es()
+    task.run_his_cb_basic_ino_task()

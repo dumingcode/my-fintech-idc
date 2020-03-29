@@ -11,6 +11,7 @@ from stock import price
 from stock import dividend_share
 from stock import quant
 from config import cons as ct
+from elasticsearch import es
 
 import numpy as np
 import talib
@@ -314,6 +315,12 @@ def run_his_cb_basic_ino_task():
             code = cb['BONDCODE']
             res = dal.updateOne(
                 {'_id': code}, 'cbBasicInfo', cb, True)
+            es.insert_document('cbond', {
+                'stockname': cb['SECURITYSHORTNAME'],
+                'stockcode': cb['SWAPSCODE'],
+                'bondname': cb['SNAME'],
+                'bondcode': cb['BONDCODE'],
+            }, code)
             time.sleep(2)
             logger.info(f'fetch cbond basic info {code} end')
     except Exception as exp:

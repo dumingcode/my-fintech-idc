@@ -32,7 +32,7 @@ before_script:
   - sleep 20
   - mongo stock --eval 'db.createCollection("hisprice");'
   - sudo redis-server /etc/redis/redis.conf
-script: pytest
+script: pytest ./stock/test/test_stock.py
 deploy:
   provider: script
   skip_cleanup: true

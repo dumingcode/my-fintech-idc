@@ -18,8 +18,8 @@ env:
       TA_LIBRARY_PATH=$DEPS_DIR/lib
 before_install:
   - openssl aes-256-cbc -K $encrypted_db2095f63ba3_key -iv $encrypted_db2095f63ba3_iv -in deploy_rsa.enc -out ~/.ssh/deploy_rsa -d
-  - openssl aes-256-cbc -K $encrypted_170c7267c513_key -iv $encrypted_170c7267c513_iv -in ./config/cons_dev.py.enc -out ./config/cons_dev.py -d
-  - openssl aes-256-cbc -K $encrypted_835283af109b_key -iv $encrypted_835283af109b_iv -in ./config/cons_prod.py.enc -out ./config/cons_prod.py -d
+  - openssl aes-256-cbc -K $encrypted_7bc3c4f9af54_key -iv $encrypted_7bc3c4f9af54_iv -in ./config/cons_dev.py.enc -out ./config/cons_dev.py -d
+  - openssl aes-256-cbc -K $encrypted_85f60e4369bf_key -iv $encrypted_85f60e4369bf_iv -in ./config/cons_prod.py.enc -out ./config/cons_prod.py -d
   - chmod 600 ~/.ssh/deploy_rsa
 install:
   - if [ $WITH_TA_LIBRARY = "yes" ]; then

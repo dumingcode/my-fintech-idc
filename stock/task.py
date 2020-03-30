@@ -315,12 +315,12 @@ def run_his_cb_basic_ino_task():
             code = cb['BONDCODE']
             res = dal.updateOne(
                 {'_id': code}, 'cbBasicInfo', cb, True)
-            es_res = es.insert_document('cbond', {
+            es_res = es.insert_document('cbond', json.dumps(s{
                 'stockname': cb['SECURITYSHORTNAME'],
                 'stockcode': cb['SWAPSCODE'],
                 'bondname': cb['SNAME'],
                 'bondcode': cb['BONDCODE'],
-            }, code)
+            }), code)
             logger.info(f'fetch cbond es result {es_res} end')
             time.sleep(2)
             logger.info(f'fetch cbond basic info {code} end')

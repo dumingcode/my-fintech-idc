@@ -67,3 +67,5 @@ if __name__ == "__main__":
     task.run_stock_alpha_beta_task()
     # task nine 更新转债基础信息数据
     task.run_his_cb_basic_ino_task()
+    # task ten 更新沪深股票构建es记录
+    task.run_stock_insert_es_task()

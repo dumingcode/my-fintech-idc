@@ -329,3 +329,29 @@ def run_his_cb_basic_ino_task():
         return False
     logger.info('*********run_his_cb_basic_ino_task end********')
     return True
+
+
+def run_stock_insert_es_task():
+    """
+        构建沪深上市公司代码和名称的es存储
+    Parameters
+    ------
+    Return
+    -------
+        result 是否正常结束
+    """
+    param = {
+        'list_status': 'L',
+        'exchange': '',
+        'fields': 'symbol'
+    }
+    hs_df = basic.get_hs_stock_list(param)
+    for index, row in hs_df.iterrows():
+        code = row['symbol']
+        name = row['name']
+        es_res = es.insert_document('stock', json.dumps({
+            'stockcode': row['symbol'],
+            'stockname': row['name']
+        }), code)
+        logger.info(f'fetch stock es result {es_res} end')
+    return True

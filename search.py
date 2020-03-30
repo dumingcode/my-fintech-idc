@@ -16,6 +16,4 @@ if __name__ == "__main__":
     env = ct.conf('ENV')
     logger.info(f'env is {env}')
 
-    init_es.init_cbond_es()
-    init_es.init_stock_es()
-    task.run_his_cb_basic_ino_task()
+    task.run_stock_insert_es_task()

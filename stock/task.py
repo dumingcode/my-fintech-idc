@@ -315,7 +315,7 @@ def run_his_cb_basic_ino_task():
             code = cb['BONDCODE']
             res = dal.updateOne(
                 {'_id': code}, 'cbBasicInfo', cb, True)
-            es_res = es.insert_document('cbond', json.dumps(s{
+            es_res = es.insert_document('cbond', json.dumps({
                 'stockname': cb['SECURITYSHORTNAME'],
                 'stockcode': cb['SWAPSCODE'],
                 'bondname': cb['SNAME'],

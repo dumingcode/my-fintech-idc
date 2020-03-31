@@ -1,6 +1,6 @@
 CONFIG = {
     'ENV': 'dev',
-    'TOKEN': 'xx',
+    'TOKEN': '6e2c0b43db77b8f42ba85a11a9adbfc65e0a5b5cd92b563eb44a7923',
     'MONGODB': {
         'uri': 'mongodb://127.0.0.1:27017/stock'
     },
@@ -9,7 +9,8 @@ CONFIG = {
     'REDIS': {
         'port': 6379,
         'host': 'localhost',
-        'keyPrefix': 'myfintech-'
+        'keyPrefix': 'myfintech-',
+        'password': None
     },
     'ES': {
         'url': 'http://127.0.0.1:9200/'

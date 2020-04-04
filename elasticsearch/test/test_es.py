@@ -18,7 +18,7 @@ def test_es_create_index_setting():
                     "tokenizer": {
                         "pinyin_tokenizer": {
                             "type": "pinyin",
-                            "keep_separate_first_letter": False,
+                            "keep_separate_first_letter": True,
                             "keep_first_letter": True,
                             "keep_joined_full_pinyin ": True
                         }

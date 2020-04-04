@@ -21,7 +21,7 @@ def init_cbond_es():
                         "tokenizer": {
                             "pinyin_tokenizer": {
                                 "type": "pinyin",
-                                "keep_separate_first_letter": False,
+                                "keep_separate_first_letter": True,
                                 "keep_first_letter": True,
                                 "keep_joined_full_pinyin ": True
                             }
@@ -79,7 +79,7 @@ def init_stock_es():
                         "tokenizer": {
                             "pinyin_tokenizer": {
                                 "type": "pinyin",
-                                "keep_separate_first_letter": False,
+                                "keep_separate_first_letter": True,
                                 "keep_first_letter": True,
                                 "keep_joined_full_pinyin ": True
                             }

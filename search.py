@@ -4,6 +4,7 @@ from loguru import logger
 
 from config import cons as ct
 from elasticsearch import init_es
+from elasticsearch import es
 from stock import task
 
 if __name__ == "__main__":
@@ -16,4 +17,9 @@ if __name__ == "__main__":
     env = ct.conf('ENV')
     logger.info(f'env is {env}')
 
+    es.delete_index('cbond')
+    es.delete_index('stock')
+    init_es.init_cbond_es()
+    init_es.init_stock_es()
     task.run_stock_insert_es_task()
+    task.run_his_cb_basic_ino_task()

@@ -46,3 +46,83 @@ def cbListUrl() -> str:
         "STARTDATE&sr=-1&p=1&ps=2000&js=var%20YNohbZAK=" + \
         "{pages:(tp),data:(x),font:(font)}"+f'&rt={ran}'
     return url
+
+# http://cn.morningstar.com/handler/quicktake.ashx?command=portfolio&fcid=F0000004AI&randomid=0.9657097972824025
+# 晨星持仓url 包含10大股票和10大债券
+
+
+def mstarPortfolio(fcid: str) -> str:
+    ran = random.random()
+    url = f'http://cn.morningstar.com/handler/quicktake.ashx?command=' +\
+        f'portfolio&fcid={fcid}&randomid={ran}'
+    return url
+
+# http://cn.morningstar.com/handler/quicktake.ashx?command=rating&fcid=F0000004AI&randomid=0.9657097972824025
+# 晨星评级
+
+
+def mstarRating(fcid: str) -> str:
+    ran = random.random()
+    url = f'http://cn.morningstar.com/handler/quicktake.ashx?command=' +\
+        f'rating&fcid={fcid}&randomid={ran}'
+    return url
+
+# http://cn.morningstar.com/handler/quicktake.ashx?command=performance&fcid=F0000004AI&randomid=0.9657097972824025
+# 晨星业绩表现计算
+
+
+def mstarPerformance(fcid: str) -> str:
+    ran = random.random()
+    url = f'http://cn.morningstar.com/handler/quicktake.ashx?command=' +\
+        f'rating&fcid={fcid}&randomid={ran}'
+    return url
+
+# http://cn.morningstar.com/handler/quicktake.ashx?command=return&fcid=F0000004AI&randomid=0.9657097972824025
+# 晨星业绩回报
+
+
+def mstarReturn(fcid: str) -> str:
+    ran = random.random()
+    url = f'http://cn.morningstar.com/handler/quicktake.ashx?command=' +\
+        f'return&fcid={fcid}&randomid={ran}'
+    return url
+
+# http://cn.morningstar.com/handler/quicktake.ashx?command=manage&fcid=F0000004AI&randomid=0.9657097972824025
+# 晨星基金投资目标成立日基金经理
+
+
+def mstarManage(fcid: str) -> str:
+    ran = random.random()
+    url = f'http://cn.morningstar.com/handler/quicktake.ashx?command=' +\
+        f'manage&fcid={fcid}&randomid={ran}'
+    return url
+
+# http://cn.morningstar.com/handler/quicktake.ashx?command=fee&fcid=F0000004AI&randomid=0.9657097972824025
+# 基金费用
+
+
+def mstarFee(fcid: str) -> str:
+    ran = random.random()
+    url = f'http://cn.morningstar.com/handler/quicktake.ashx?command=' +\
+        f'fee&fcid={fcid}&randomid={ran}'
+    return url
+
+# http://cn.morningstar.com/handler/quicktake.ashx?command=banchmark&fcid=F0000004AI&randomid=0.9657097972824025
+# 基金种类和benchmark
+
+
+def mstarBanchmark(fcid: str) -> str:
+    ran = random.random()
+    url = f'http://cn.morningstar.com/handler/quicktake.ashx?command=' +\
+        f'banchmark&fcid={fcid}&randomid={ran}'
+    return url
+
+
+def mstarHeaders() -> object:
+    return {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/' +
+        '537.36 (KHTML, like Gecko) Chrome/60.0.3100.0 Safari/537.36',
+        "Accept": "text/html;q=0.9,image/webp,image/apng,*/*;q=0.8",
+        "Accept-Language": "zh-CN,zh;q=0.8",
+        "Connection": "keep-alive"
+    }

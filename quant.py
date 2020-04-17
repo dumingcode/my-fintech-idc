@@ -1,11 +1,10 @@
 import sys
-
 from loguru import logger
-
 from config import cons as ct
 from stock import task
 from house import house_task
 from stock import quant
+from fund import scrawl
 
 if __name__ == "__main__":
     logger.add(sys.stderr, format='{time} {level} {message}',
@@ -26,4 +25,5 @@ if __name__ == "__main__":
     # task.run_opt_stock_index_sample_task()
 
     # task.run_stock_ind_sample_task()
-    task.run_stock_alpha_beta_task()
+    # task.run_stock_alpha_beta_task()
+    scrawl.scrawlBenchmark('F0000004AI')

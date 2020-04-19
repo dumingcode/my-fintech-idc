@@ -26,4 +26,7 @@ if __name__ == "__main__":
 
     # task.run_stock_ind_sample_task()
     # task.run_stock_alpha_beta_task()
-    scrawl.scrawlBenchmark('F0000004AI')
+    # scrawl.scrawlBenchmark('F0000004AI')
+    scrawl.initFundTarget()
+    msScrawl = scrawl.MstarScrawl()
+    msScrawl.scrawlFundTask()

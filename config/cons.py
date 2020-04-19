@@ -74,7 +74,7 @@ def mstarRating(fcid: str) -> str:
 def mstarPerformance(fcid: str) -> str:
     ran = random.random()
     url = f'http://cn.morningstar.com/handler/quicktake.ashx?command=' +\
-        f'rating&fcid={fcid}&randomid={ran}'
+        f'performance&fcid={fcid}&randomid={ran}'
     return url
 
 # http://cn.morningstar.com/handler/quicktake.ashx?command=return&fcid=F0000004AI&randomid=0.9657097972824025

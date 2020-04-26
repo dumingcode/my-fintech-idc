@@ -153,6 +153,7 @@ def extractOutline(fund: object) -> object:
         :param fund:晨星返回数据解析对象
     '''
     outline = {}
+    code = fund['code']
     try:
         outline['FundName'] = fund['benchmark']['FundName']
         outline['CategoryName'] = fund['benchmark']['CategoryName']
@@ -172,12 +173,16 @@ def extractOutline(fund: object) -> object:
         outline['InceptionDate'] = fund['manage']['InceptionDate']  # 成立日期
         outline['Managers'] = ''
         managers = fund['manage']['Managers']  # 投资经理
+        outline['ManagerTime'] = datetime.date.today().strftime('%Y-%m-%d')
         for manager in managers:
             if not manager['Leave']:
                 mName = manager['ManagerName']
                 mRange = manager['ManagementRange']
                 mTime = manager['ManagementTime']
                 outline['Managers'] += f'{mName},{mRange},{mTime};'
+                if outline['ManagerTime'] > mRange.split()[0]:
+                    outline['ManagerTime'] = mRange.split()[0]
+
         # 回报
         currentReturn = fund['return']['CurrentReturn']
         # 年化回报计算截止日期
@@ -222,10 +227,15 @@ def extractOutline(fund: object) -> object:
         outline['Cash'] = portfolio['Cash']
         outline['Stock'] = portfolio['Stock']
         outline['Bond'] = portfolio['Bond']
-        outline['PortfolioEffectiveDate'] = portfolio['EffectiveDate'][6:17]
+        ptime = time.localtime(
+            int(portfolio['EffectiveDate'][6:16]))
+        pdate = time.strftime('%Y-%m-%d', ptime)
+        outline['PortfolioEffectiveDate'] = pdate
         outline['Bond'] = portfolio['Bond']
         outline['TopStockWeight'] = portfolio['TopStockWeight']
         outline['TopBondsWeight'] = portfolio['TopBondsWeight']
+        res = dal.updateOne({'_id': f'{code}-{pdate}'},
+                            'fund_portfolio', portfolio, True)
         return outline
     except Exception as err:
         logger.critical(err)
@@ -243,6 +253,7 @@ class MstarScrawl:
             returns = scrawlReturn(fcid)
             manage = scrawlManage(fcid)
             fund = {
+                'fcid': fcid,
                 'code': code,
                 'benchmark': benchmark,
                 'fee': fee,

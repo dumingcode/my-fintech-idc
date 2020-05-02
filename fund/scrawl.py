@@ -12,6 +12,7 @@ import os
 import time
 import random
 from util import utils
+from elasticsearch import es
 
 """
     获取晨星基金对应基金的benchmark比较基准
@@ -155,6 +156,7 @@ def extractOutline(fund: object) -> object:
     outline = {}
     code = fund['code']
     try:
+        outline['Code'] = code
         outline['FundName'] = fund['benchmark']['FundName']
         outline['CategoryName'] = fund['benchmark']['CategoryName']
         outline['BanchmarkName'] = fund['benchmark']['BanchmarkName']
@@ -186,7 +188,7 @@ def extractOutline(fund: object) -> object:
         # 回报
         currentReturn = fund['return']['CurrentReturn']
         # 年化回报计算截止日期
-        outline['EffectiveDate'] = currentReturn['EffectiveDate']
+        outline['returnEffectiveDate'] = currentReturn['EffectiveDate']
         # 年化回报收益率
         outline['Return'] = []
         curReturns = currentReturn['Return']
@@ -222,6 +224,7 @@ def extractOutline(fund: object) -> object:
         outline['Rating5Year'] = rating['Rating5Year']
         outline['Rating10Year'] = rating['Rating10Year']
         outline['RiskAssessment'] = rating['RiskAssessment']
+        outline['RiskStats'] = rating['RiskStats']
         # portfolio组合
         portfolio = fund['portfolio']
         outline['Cash'] = portfolio['Cash']
@@ -230,16 +233,151 @@ def extractOutline(fund: object) -> object:
         ptime = time.localtime(
             int(portfolio['EffectiveDate'][6:16]))
         pdate = time.strftime('%Y-%m-%d', ptime)
+        portfolio['date'] = pdate
         outline['PortfolioEffectiveDate'] = pdate
         outline['Bond'] = portfolio['Bond']
         outline['TopStockWeight'] = portfolio['TopStockWeight']
         outline['TopBondsWeight'] = portfolio['TopBondsWeight']
         res = dal.updateOne({'_id': f'{code}-{pdate}'},
                             'fund_portfolio', portfolio, True)
+        constructSearchEs(outline)
         return outline
     except Exception as err:
         logger.critical(err)
         return None
+
+
+def constructSearchEs(outline: object):
+    searchObj = {}
+    try:
+        searchObj['Code'] = outline['Code']
+        searchObj['FundName'] = outline['FundName']
+        searchObj['InceptionDate'] = outline['InceptionDate']
+        searchObj['ManagerTime'] = outline['ManagerTime']
+        searchObj['Rating3Year'] = outline['Rating3Year']
+        searchObj['Rating5Year'] = outline['Rating5Year']
+        searchObj['Rating10Year'] = outline['Rating10Year']
+        searchObj['Cash'] = outline['Cash']
+        searchObj['Stock'] = outline['Stock']
+        searchObj['Bond'] = outline['Bond']
+        searchObj['TopStockWeight'] = outline['TopStockWeight']
+        searchObj['TopBondsWeight'] = outline['TopBondsWeight']
+        searchObj['Worst3MonReturn'] = outline['Worst3MonReturn']
+        searchObj['Worst6MonReturn'] = outline['Worst6MonReturn']
+        for per in outline['performance']:
+            year = per['Year']
+            searchObj[year] = per['ReturnYear']
+        res = es.insert_document('fund', json.dumps(
+            searchObj), searchObj['Code'])
+        logger.info(searchObj)
+        logger.info(res)
+    except Exception as err:
+        logger.critical(err)
+        return -1
+
+
+def initEsIndexMapping():
+    settings = {
+        "settings": {
+            "number_of_shards": "3",
+            "number_of_replicas": "1",
+            "index": {
+                "analysis": {
+                    "analyzer": {
+                        "pinyin_analyzer": {
+                            "tokenizer": "pinyin_tokenizer"
+                        }
+                    },
+                    "tokenizer": {
+                        "pinyin_tokenizer": {
+                            "type": "pinyin",
+                            "keep_separate_first_letter": True,
+                            "keep_first_letter": True,
+                            "keep_joined_full_pinyin ": True
+                        }
+                    }
+                }
+            }
+        }
+    }
+    res = es.create_index_setting('fund', json.dumps(settings))
+    logger.info(res)
+    mappings = {
+        "_doc": {
+            "properties": {
+                "FundName": {
+                    "type": "text",
+                    "analyzer": "pinyin_analyzer",
+                    "search_analyzer": "pinyin_analyzer"
+                },
+                "Code": {
+                    "type": "keyword"
+                },
+                "InceptionDate": {
+                    "type": "date"
+                },
+                "ManagerTime": {
+                    "type": "date"
+                },
+                "Rating3Year": {
+                    "type": "integer"
+                },
+                "Rating5Year": {
+                    "type": "integer"
+                },
+                "Rating10Year": {
+                    "type": "integer"
+                },
+                "Cash": {
+                    "type": "float"
+                },
+                "Stock": {
+                    "type": "float"
+                },
+                "Bond": {
+                    "type": "float"
+                },
+                "StoTopStockWeight": {
+                    "type": "float"
+                },
+                "TopBondsWeight": {
+                    "type": "float"
+                },
+                "2020": {
+                    "type": "float"
+                },
+                "2019": {
+                    "type": "float"
+                },
+                "2018": {
+                    "type": "float"
+                },
+                "2017": {
+                    "type": "float"
+                },
+                "2016": {
+                    "type": "float"
+                },
+                "2015": {
+                    "type": "float"
+                },
+                "2014": {
+                    "type": "float"
+                },
+                "2013": {
+                    "type": "float"
+                },
+                "Worst3MonReturn": {
+                    "type": "float"
+                },
+                "Worst6MonReturn": {
+                    "type": "float"
+                }
+            }
+        }
+    }
+    res = es.create_mapping('test', json.dumps(mappings))
+    logger.info(res)
 
 
 class MstarScrawl:

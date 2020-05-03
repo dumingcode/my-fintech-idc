@@ -9,4 +9,5 @@ pip install loguru
 pip install pytest
 pip install redis
 pip install TA-Lib
+pip install beautifulsoup4
 ```

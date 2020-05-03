@@ -104,3 +104,5 @@ venv.bak/
 .mypy_cache/
 
 /config/cons_prod.py
+/fund/data/targetFund/*
+!/fund/data/targetFund/*.html

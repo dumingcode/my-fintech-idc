@@ -8,6 +8,7 @@ from stock import task
 from stock import basic
 from stock import price
 from stock import quant
+from fund import scrawl
 # 更新股票历史前复权数据任务
 
 
@@ -69,3 +70,6 @@ if __name__ == "__main__":
     task.run_his_cb_basic_ino_task()
     # task ten 更新沪深股票构建es记录
     task.run_stock_insert_es_task()
+    # task eleven 每日更新晨星基金数据
+    msScrawl = scrawl.MstarScrawl()
+    msScrawl.scrawlFundTask()

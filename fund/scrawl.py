@@ -126,6 +126,11 @@ def scrawlPortfolio(fcid: str) -> object:
 # 初始化共同基金抓取目标
 
 
+"""
+此函数已取消
+"""
+
+
 def initFundTarget():
     try:
         with open(os.path.abspath('./fund/data/fund.csv'), newline='',
@@ -139,7 +144,7 @@ def initFundTarget():
                     'name': row['name']
                 }
                 dal.updateOne(
-                    {'_id': row['code'][0:6]}, 'fundTarget', data, True)
+                    {'_id': row['code'][0:6]}, 'fund_target', data, True)
     except Exception as exp:
         logger.critical(exp)
         return False
@@ -159,6 +164,7 @@ def extractOutline(fund: object) -> object:
         outline['Code'] = code
         outline['FundName'] = fund['benchmark']['FundName']
         outline['CategoryName'] = fund['benchmark']['CategoryName']
+        outline['CategoryId'] = fund['benchmark']['CategoryId']
         outline['BanchmarkName'] = fund['benchmark']['BanchmarkName']
         outline['Management'] = fund['fee']['Management']
         outline['Custodial'] = fund['fee']['Custodial']
@@ -174,6 +180,7 @@ def extractOutline(fund: object) -> object:
         outline['Profile'] = fund['manage']['Profile']  # 投资目标
         outline['InceptionDate'] = fund['manage']['InceptionDate']  # 成立日期
         outline['Managers'] = ''
+        outline['ManagerName'] = ''
         managers = fund['manage']['Managers']  # 投资经理
         outline['ManagerTime'] = datetime.date.today().strftime('%Y-%m-%d')
         for manager in managers:
@@ -181,6 +188,7 @@ def extractOutline(fund: object) -> object:
                 mName = manager['ManagerName']
                 mRange = manager['ManagementRange']
                 mTime = manager['ManagementTime']
+                outline['ManagerName'] += f'{mName};'
                 outline['Managers'] += f'{mName},{mRange},{mTime};'
                 if outline['ManagerTime'] > mRange.split()[0]:
                     outline['ManagerTime'] = mRange.split()[0]
@@ -198,6 +206,8 @@ def extractOutline(fund: object) -> object:
                                       'ReturnToInd': curReturn['ReturnToInd'],
                                       'ReturnToCat': curReturn['ReturnToCat']
                                       })
+            if curReturn['Name'] == '今年以来回报':
+                outline['thisYear'] = curReturn['Return']
         # 业绩表现
         performances = fund['performance']
         outline['Worst3MonReturn'] = performances.get('Worst3MonReturn', '')
@@ -209,7 +219,8 @@ def extractOutline(fund: object) -> object:
                 continue
             outline['performance'].append({
                 'Year': per['Year'],
-                'ReturnYear': per['ReturnYear'],
+                'ReturnYear': per['ReturnYear'] if per['ReturnYear'] is not
+                None and per['ReturnYear'] != '' else outline['thisYear'],
                 'ReturnQ1': per['ReturnQ1'],
                 'ReturnQ2': per['ReturnQ2'],
                 'ReturnQ3': per['ReturnQ3'],
@@ -240,7 +251,6 @@ def extractOutline(fund: object) -> object:
         outline['TopBondsWeight'] = portfolio['TopBondsWeight']
         res = dal.updateOne({'_id': f'{code}-{pdate}'},
                             'fund_portfolio', portfolio, True)
-        constructSearchEs(outline)
         return outline
     except Exception as err:
         logger.critical(err)
@@ -264,6 +274,8 @@ def constructSearchEs(outline: object):
         searchObj['TopBondsWeight'] = outline['TopBondsWeight']
         searchObj['Worst3MonReturn'] = outline['Worst3MonReturn']
         searchObj['Worst6MonReturn'] = outline['Worst6MonReturn']
+        searchObj['CategoryId'] = outline['CategoryId']
+        searchObj['ManagerName'] = outline['ManagerName']
         for per in outline['performance']:
             year = per['Year']
             searchObj[year] = per['ReturnYear']
@@ -306,6 +318,11 @@ def initEsIndexMapping():
         "_doc": {
             "properties": {
                 "FundName": {
+                    "type": "text",
+                    "analyzer": "pinyin_analyzer",
+                    "search_analyzer": "pinyin_analyzer"
+                },
+                "ManagerName": {
                     "type": "text",
                     "analyzer": "pinyin_analyzer",
                     "search_analyzer": "pinyin_analyzer"
@@ -372,6 +389,9 @@ def initEsIndexMapping():
                 },
                 "Worst6MonReturn": {
                     "type": "float"
+                },
+                "CategoryId": {
+                    "type": "keyword"
                 }
             }
         }
@@ -402,8 +422,13 @@ class MstarScrawl:
                 'manage': manage,
                 'date': datetime.date.today().strftime('%Y%m%d')
             }
-            extractOutline(fund)
+            # 存储fund 原始数据
             res = dal.updateOne({'_id': fcid}, 'fund', fund, True)
+            # 构建fund 详情数据
+            outline = extractOutline(fund)
+            res = dal.updateOne({'_id': fcid}, 'fund_outline', outline, True)
+            # 构建ES
+            constructSearchEs(outline)
             return res
         except Exception as err:
             logger.critical(err)
@@ -412,7 +437,7 @@ class MstarScrawl:
     def scrawlFundTask(self):
         try:
             fundArray = dal.queryMany(None, {'_id': 1, 'cxcode': 1},
-                                      0, None, 'fundTarget')
+                                      0, None, 'fund_target')
             fundArr = list(fundArray)
             if len(fundArr) == 0:
                 return None
@@ -421,7 +446,7 @@ class MstarScrawl:
                 cxcode = fund['cxcode']
                 if (code is None or cxcode is None):
                     continue
-                time.sleep(random.randint(20, 30))
+                time.sleep(random.randint(10, 15))
                 logger.info(fund)
                 self.scrawlSingleFundInfo(cxcode, code)
         except Exception as err:

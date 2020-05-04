@@ -25,7 +25,7 @@ if __name__ == "__main__":
     # house_task.run_house_extract_localhis_data_task()
     # task.run_opt_stock_index_sample_task()
 
-    fundTarget.createFundTarget()
+    # fundTarget.createFundTarget()
     scrawl.initEsIndexMapping()
     msScrawl = scrawl.MstarScrawl()
     msScrawl.scrawlFundTask()

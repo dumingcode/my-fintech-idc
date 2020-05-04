@@ -208,19 +208,26 @@ def extractOutline(fund: object) -> object:
                                       })
             if curReturn['Name'] == '今年以来回报':
                 outline['thisYear'] = curReturn['Return']
+            if curReturn['Name'] == '三年回报（年化）':
+                outline['Return3Year'] = curReturn['Return']
+            if curReturn['Name'] == '五年回报（年化）':
+                outline['Return5Year'] = curReturn['Return']
+            if curReturn['Name'] == '十年回报（年化）':
+                outline['Return10Year'] = curReturn['Return']
         # 业绩表现
         performances = fund['performance']
         outline['Worst3MonReturn'] = performances.get('Worst3MonReturn', '')
         outline['Worst6MonReturn'] = performances.get('Worst6MonReturn', '')
         outline['performance'] = []
+        thisYear = datetime.date.today().strftime('%Y')
         for key in performances.keys():
             per = performances[key]
             if not isinstance(per, dict):
                 continue
             outline['performance'].append({
                 'Year': per['Year'],
-                'ReturnYear': per['ReturnYear'] if per['ReturnYear'] is not
-                None and per['ReturnYear'] != '' else outline['thisYear'],
+                'ReturnYear': per['ReturnYear'] if per['Year'] != thisYear
+                else outline['thisYear'],
                 'ReturnQ1': per['ReturnQ1'],
                 'ReturnQ2': per['ReturnQ2'],
                 'ReturnQ3': per['ReturnQ3'],
@@ -264,21 +271,30 @@ def constructSearchEs(outline: object):
         searchObj['FundName'] = outline['FundName']
         searchObj['InceptionDate'] = outline['InceptionDate']
         searchObj['ManagerTime'] = outline['ManagerTime']
-        searchObj['Rating3Year'] = outline['Rating3Year']
-        searchObj['Rating5Year'] = outline['Rating5Year']
-        searchObj['Rating10Year'] = outline['Rating10Year']
+        searchObj['Rating3Year'] = int(outline['Rating3Year'])
+        searchObj['Rating5Year'] = int(outline['Rating5Year'])
+        searchObj['Rating10Year'] = int(outline['Rating10Year'])
+        if outline['Return3Year'] != '':
+            searchObj['Return3Year'] = float(outline['Return3Year'])
+        if outline['Return5Year'] != '':
+            searchObj['Return5Year'] = float(outline['Return5Year'])
+        if outline['Return10Year'] != '':
+            searchObj['Return10Year'] = float(outline['Return10Year'])
         searchObj['Cash'] = outline['Cash']
         searchObj['Stock'] = outline['Stock']
         searchObj['Bond'] = outline['Bond']
         searchObj['TopStockWeight'] = outline['TopStockWeight']
         searchObj['TopBondsWeight'] = outline['TopBondsWeight']
-        searchObj['Worst3MonReturn'] = outline['Worst3MonReturn']
-        searchObj['Worst6MonReturn'] = outline['Worst6MonReturn']
+        if outline['Worst3MonReturn'] != '':
+            searchObj['Worst3MonReturn'] = float(outline['Worst3MonReturn'])
+        if outline['Worst6MonReturn'] != '':
+            searchObj['Worst6MonReturn'] = float(outline['Worst6MonReturn'])
         searchObj['CategoryId'] = outline['CategoryId']
         searchObj['ManagerName'] = outline['ManagerName']
         for per in outline['performance']:
             year = per['Year']
-            searchObj[year] = per['ReturnYear']
+            if per['ReturnYear'] != '':
+                searchObj[year] = float(per['ReturnYear'])
         res = es.insert_document('fund', json.dumps(
             searchObj), searchObj['Code'])
         logger.info(searchObj)
@@ -331,10 +347,12 @@ def initEsIndexMapping():
                     "type": "keyword"
                 },
                 "InceptionDate": {
-                    "type": "date"
+                    "type": "date",
+                    "format": "yyyy-MM-dd"
                 },
                 "ManagerTime": {
-                    "type": "date"
+                    "type": "date",
+                    "format": "yyyy-MM-dd"
                 },
                 "Rating3Year": {
                     "type": "integer"
@@ -392,6 +410,15 @@ def initEsIndexMapping():
                 },
                 "CategoryId": {
                     "type": "keyword"
+                },
+                "Return3Year": {
+                    "type": "float"
+                },
+                "Return5Year": {
+                    "type": "float"
+                },
+                "Return10Year": {
+                    "type": "float"
                 }
             }
         }

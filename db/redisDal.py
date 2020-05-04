@@ -20,3 +20,21 @@ def redisHSet(key: str, field, value) -> bool:
                        password=connConfig['password'])
     val = conn.hset(connConfig['keyPrefix'] + key, field, value)
     return val
+
+
+def redisSet(key: str, value) -> bool:
+    connConfig = ct.conf('REDIS')
+    conn = redis.Redis(host=connConfig['host'],
+                       port=connConfig['port'],
+                       password=connConfig['password'])
+    val = conn.set(connConfig['keyPrefix'] + key, value)
+    return val
+
+
+def redisGet(key: str):
+    connConfig = ct.conf('REDIS')
+    conn = redis.Redis(host=connConfig['host'],
+                       port=connConfig['port'],
+                       password=connConfig['password'])
+    val = conn.get(connConfig['keyPrefix'] + key)
+    return val

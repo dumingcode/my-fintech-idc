@@ -13,6 +13,7 @@ import time
 import random
 from util import utils
 from elasticsearch import es
+from db import redisDal
 
 """
     获取晨星基金对应基金的benchmark比较基准
@@ -201,11 +202,6 @@ def extractOutline(fund: object) -> object:
         outline['Return'] = []
         curReturns = currentReturn['Return']
         for curReturn in curReturns:
-            outline['Return'].append({'Name': curReturn['Name'],
-                                      'Return': curReturn['Return'],
-                                      'ReturnToInd': curReturn['ReturnToInd'],
-                                      'ReturnToCat': curReturn['ReturnToCat']
-                                      })
             if curReturn['Name'] == '今年以来回报':
                 outline['thisYear'] = curReturn['Return']
             if curReturn['Name'] == '三年回报（年化）':
@@ -453,7 +449,10 @@ class MstarScrawl:
             res = dal.updateOne({'_id': fcid}, 'fund', fund, True)
             # 构建fund 详情数据
             outline = extractOutline(fund)
+            redisRes = redisDal.redisSet(f'fund:{code}', json.dumps(outline))
             res = dal.updateOne({'_id': fcid}, 'fund_outline', outline, True)
+            logger.info(f'{code} redis result:' +
+                        str(redisRes) + ' mongodb result:' + str(res))
             # 构建ES
             constructSearchEs(outline)
             return res

@@ -26,6 +26,6 @@ if __name__ == "__main__":
     # task.run_opt_stock_index_sample_task()
 
     # fundTarget.createFundTarget()
-    scrawl.initEsIndexMapping()
+    # scrawl.initEsIndexMapping()
     msScrawl = scrawl.MstarScrawl()
     msScrawl.scrawlFundTask()

@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 
 def createFundTarget():
     try:
-        for idx in range(1, 27):
+        for idx in range(27, 32):
             fileStr = f'./fund/data/targetFund/基金筛选_晨星网{idx}.html'
             createSingleFundTarget(fileStr)
     except Exception as err:

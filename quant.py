@@ -27,5 +27,5 @@ if __name__ == "__main__":
 
     fundTarget.createFundTarget()
     # scrawl.initEsIndexMapping()
-    # msScrawl = scrawl.MstarScrawl()
-    # msScrawl.scrawlFundTask()
+    msScrawl = scrawl.MstarScrawl()
+    msScrawl.scrawlFundTask()

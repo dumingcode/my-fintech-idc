@@ -472,7 +472,7 @@ class MstarScrawl:
                 cxcode = fund['cxcode']
                 if (code is None or cxcode is None):
                     continue
-                time.sleep(random.randint(10, 15))
+                time.sleep(random.randint(15, 20))
                 logger.info(fund)
                 self.scrawlSingleFundInfo(cxcode, code)
         except Exception as err:

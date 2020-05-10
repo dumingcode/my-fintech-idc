@@ -45,7 +45,6 @@ if __name__ == "__main__":
     logger.info(f'env is {env}')
     if env == 'prod':
         logger.add("idc_{time}.log",  rotation="1 day", level="INFO")
-
     # task one
     his_fq_stock_price_task()
     if len(sys.argv) > 4:
@@ -61,7 +60,7 @@ if __name__ == "__main__":
     # taks six 统计自选股中占各个指数的数量
     task.run_opt_stock_index_sample_task()
     # task seven 统计个股国证二级三级分类 每周6跑一次
-    curWeek = int(time.strftime("%w"))
+    curWeek = int(time.strftime('%w', time.gmtime()))
     if curWeek == 6:
         task.run_stock_ind_sample_task()
     # task eight 更新alpha beta
@@ -70,6 +69,8 @@ if __name__ == "__main__":
     task.run_his_cb_basic_ino_task()
     # task ten 更新沪深股票构建es记录
     task.run_stock_insert_es_task()
-    # task eleven 每日更新晨星基金数据
-    msScrawl = scrawl.MstarScrawl()
-    msScrawl.scrawlFundTask()
+    # task eleven 每日更新晨星基金数据 每月11号跑一次
+    curDay = int(time.strftime('%d', time.gmtime()))
+    if curDay == 11:
+        msScrawl = scrawl.MstarScrawl()
+        msScrawl.scrawlFundTask()

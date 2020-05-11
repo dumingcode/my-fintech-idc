@@ -69,8 +69,3 @@ if __name__ == "__main__":
     task.run_his_cb_basic_ino_task()
     # task ten 更新沪深股票构建es记录
     task.run_stock_insert_es_task()
-    # task eleven 每日更新晨星基金数据 每月11号跑一次
-    curDay = int(time.strftime('%d', time.gmtime()))
-    if curDay == 11:
-        msScrawl = scrawl.MstarScrawl()
-        msScrawl.scrawlFundTask()

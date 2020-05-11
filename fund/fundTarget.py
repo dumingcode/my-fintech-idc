@@ -32,10 +32,10 @@ def createSingleFundTarget(filePath: str):
             idx += 1
             if idx == 1:
                 continue
-            cxcodes = tr.contents[1].find("span")['tag']
+            cxcodes = tr.contents[2].find("span")['tag']
             cxcode = cxcodes.split('|')[0]
-            _id = tr.contents[2].get_text()
-            name = tr.contents[3].get_text()
+            _id = tr.contents[3].get_text()
+            name = tr.contents[4].get_text()
             data = {
                 '_id': _id,
                 'cxcode': cxcode,

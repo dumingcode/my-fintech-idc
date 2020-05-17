@@ -18,6 +18,10 @@ import talib
 from db import redisDal
 import json
 
+import tushare as ts
+
+import time
+
 # 自动任务：更新沪深股市全部上市股票past_diff_days天前的前复权数据
 
 
@@ -49,6 +53,7 @@ def run_his_stock_adj_price_task(past_diff_days, exchange=''):
             'start_date': past_str,
             'end_date': today_str,
             'adj': 'qfq',
+            'freq': 'D',
             'asset': 'I' if str(row['ts_code']).startswith('399') else 'E'
         })
         if adj_price_df is None:
@@ -103,6 +108,7 @@ def run_his_given_stock_adj_price_task(ts_code, past_diff_days=600):
         'start_date': past_str,
         'end_date': today_str,
         'adj': 'qfq',
+        'freq': 'D',
         'asset': 'I' if ts_code.startswith('399') else 'E'
     })
 
@@ -354,4 +360,133 @@ def run_stock_insert_es_task():
             'stockname': row['name']
         }), code)
         logger.info(f'fetch stock es result {es_res} end')
+    return True
+
+
+def run_maintain_tushare_token_life_task():
+    """
+        调用tushare token以保证小号一直在调用
+    Parameters
+    ------
+    Return
+    -------
+        result 是否正常结束
+    """
+    try:
+        pro = ts.pro_api(ct.tushareBackUpToken())
+        df = pro.tmt_twincome(item='8')
+        logger.info(f'tmt_twincomedetail {len(df)} end')
+        time.sleep(2)
+        df = pro.tmt_twincome(item='1')
+        logger.info(f'tmt_pc {len(df)} end')
+        time.sleep(2)
+        df = pro.tmt_twincome(item='18')
+        logger.info(f'tmt_industry_pc {len(df)} end')
+        time.sleep(2)
+        df = pro.tmt_twincome(item='28')
+        logger.info(f'tmt_lcd {len(df)} end')
+    except Exception as exp:
+        logger.error(exp)
+    return True
+
+
+def run_stock_day_week_month_ma_task():
+    """
+        构建沪深上市公司代码和名称的es存储
+    Parameters
+    ------
+    Return
+    -------
+        result 是否正常结束
+    """
+    param = {
+        'list_status': 'L',
+        'exchange': '',
+        'fields': 'symbol'
+    }
+    hs_df = basic.get_hs_stock_list(param)
+    for index, row in hs_df.iterrows():
+        try:
+            code = row['symbol']
+            name = row['name']
+            today = datetime.datetime.now().strftime("%Y%m%d")
+            two_year = int(time.strftime(
+                '%Y', time.localtime(time.time()))) - 2
+            five_year = int(time.strftime(
+                '%Y', time.localtime(time.time()))) - 5
+            eight_year = int(time.strftime(
+                '%Y', time.localtime(time.time()))) - 11
+            month_day = time.strftime('%m%d', time.localtime(time.time()))
+            two_year_ago = '{}{}'.format(two_year, month_day)
+            five_year_ago = '{}{}'.format(five_year, month_day)
+            eight_year_ago = '{}{}'.format(eight_year, month_day)
+
+            param_day = {
+                'ts_code': row['ts_code'],
+                'start_date': two_year_ago,
+                'end_date': today,
+                'adj': 'qfq',
+                'freq': 'D',
+                'asset': 'E',
+                'ma': [20, 30, 60, 90, 120, 250]
+            }
+            day_df = price.get_adj_ma_price(param_day)
+            ma_data = day_df.fillna('').iloc[0]
+            ma_day = {
+                'trade_date': ma_data['trade_date'],
+                'ma20': ma_data['ma20'],
+                'ma30': ma_data['ma30'],
+                'ma60': ma_data['ma60'],
+                'ma90': ma_data['ma90'],
+                'ma120': ma_data['ma120'],
+                'ma250': ma_data['ma250']
+            }
+
+            param_week = {
+                'ts_code': row['ts_code'],
+                'start_date': five_year_ago,
+                'end_date': today,
+                'adj': 'qfq',
+                'freq': 'W',
+                'asset': 'E',
+                'ma': [20, 30, 60, 90, 120, 250]
+            }
+            week_df = price.get_adj_ma_price(param_week)
+            ma_week_data = week_df.fillna('').iloc[0]
+            ma_week = {
+                'trade_date': ma_week_data['trade_date'],
+                'ma20': ma_week_data['ma20'],
+                'ma30': ma_week_data['ma30'],
+                'ma60': ma_week_data['ma60'],
+                'ma90': ma_week_data['ma90'],
+                'ma120': ma_week_data['ma120'],
+                'ma250': ma_week_data['ma250']
+            }
+
+            param_month = {
+                'ts_code': row['ts_code'],
+                'start_date': eight_year_ago,
+                'end_date': today,
+                'adj': 'qfq',
+                'freq': 'M',
+                'asset': 'E',
+                'ma': [20, 30, 60, 90, 120]
+            }
+            month_df = price.get_adj_ma_price(param_month)
+            ma_month_data = month_df.fillna('').iloc[0]
+            ma_month = {
+                'trade_date': ma_month_data['trade_date'],
+                'ma20': ma_month_data['ma20'],
+                'ma30': ma_month_data['ma30'],
+                'ma60': ma_month_data['ma60'],
+                'ma90': ma_month_data['ma90'],
+                'ma120': ma_month_data['ma120']
+            }
+            redisObj = {'code': code, 'ma_day': ma_day,
+                        'ma_week': ma_week, 'ma_month': ma_month}
+            # save
+            redisRes = redisDal.redisSet(f'ma:{code}', json.dumps(redisObj))
+            logger.info(f'{code} ma result:' + str(redisRes))
+        except Exception as exp:
+            logger.error(exp)
     return True

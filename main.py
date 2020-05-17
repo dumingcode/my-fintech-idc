@@ -69,3 +69,7 @@ if __name__ == "__main__":
     task.run_his_cb_basic_ino_task()
     # task ten 更新沪深股票构建es记录
     task.run_stock_insert_es_task()
+    # task eleven 每天跑ma周线月线数据
+    task.run_stock_day_week_month_ma_task()
+    # task twelve 每天调用tushare小号
+    task.run_maintain_tushare_token_life_task()

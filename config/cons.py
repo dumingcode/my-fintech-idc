@@ -118,6 +118,10 @@ def mstarBanchmark(fcid: str) -> str:
     return url
 
 
+def tushareBackUpToken() -> str:
+    return 'fd52f39b7d98130bf8b69b27df2771b5f36e8886ee8702bde829ea27'
+
+
 def mstarHeaders() -> object:
     return {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/' +

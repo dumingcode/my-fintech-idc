@@ -244,6 +244,8 @@ def extractOutline(fund: object) -> object:
         outline['Cash'] = portfolio['Cash']
         outline['Stock'] = portfolio['Stock']
         outline['Bond'] = portfolio['Bond']
+        outline['Top10StockHoldings'] = portfolio['Top10StockHoldings']
+        outline['Top5BondHoldings'] = portfolio['Top5BondHoldings']
         ptime = time.localtime(
             int(portfolio['EffectiveDate'][6:16]))
         pdate = time.strftime('%Y-%m-%d', ptime)

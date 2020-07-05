@@ -281,6 +281,7 @@ def constructSearchEs(outline: object):
         searchObj['Cash'] = outline['Cash']
         searchObj['Stock'] = outline['Stock']
         searchObj['Bond'] = outline['Bond']
+        searchObj['PortfolioEffectiveDate'] = outline['PortfolioEffectiveDate']
         searchObj['TopStockWeight'] = outline['TopStockWeight']
         searchObj['TopBondsWeight'] = outline['TopBondsWeight']
         if outline['Worst3MonReturn'] != '':

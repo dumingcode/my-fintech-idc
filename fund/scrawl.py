@@ -345,6 +345,9 @@ def initEsIndexMapping():
                 "Code": {
                     "type": "keyword"
                 },
+                "PortfolioEffectiveDate": {
+                    "type": "keyword"
+                },
                 "InceptionDate": {
                     "type": "date",
                     "format": "yyyy-MM-dd"

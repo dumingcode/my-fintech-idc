@@ -439,6 +439,18 @@ class MstarScrawl:
             performance = scrawlPerformance(fcid)
             returns = scrawlReturn(fcid)
             manage = scrawlManage(fcid)
+            if benchmark is None:
+                raise Exception('benchmark is none')
+            if fee is None:
+                raise Exception('fee is none')
+            if portfolio is None:
+                raise Exception('portfolio is none')
+            if rating is None:
+                raise Exception('rating is none')
+            if returns is None:
+                raise Exception('returns is none')
+            if manage is None:
+                raise Exception('manage is none')
             fund = {
                 'fcid': fcid,
                 'code': code,

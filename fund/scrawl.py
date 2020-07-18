@@ -496,3 +496,18 @@ class MstarScrawl:
         except Exception as err:
             logger.critical(err)
             return -1
+
+    def restoreRedisDataFromMongo(self):
+        try:
+            fundArray = dal.queryMany(None, None,
+                                      0, None, 'fund_outline')
+            fundArr = list(fundArray)
+            if len(fundArr) == 0:
+                return None
+            for fund in fundArr:
+                code = fund['Code']
+                logger.info(code)
+                redisRes = redisDal.redisSet(f'fund:{code}', json.dumps(fund))
+        except Exception as err:
+            logger.critical(err)
+            return -1

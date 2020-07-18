@@ -19,5 +19,5 @@ if __name__ == "__main__":
 
     # 每月跑一次公募基金抓取任务
     msScrawl = scrawl.MstarScrawl()
-    # msScrawl.scrawlFundTask()
-    msScrawl.restoreRedisDataFromMongo()
+    msScrawl.scrawlFundTask()
+    # msScrawl.restoreRedisDataFromMongo()
